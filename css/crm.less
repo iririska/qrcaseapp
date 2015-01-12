@@ -1,0 +1,224 @@
+.progress.thin {
+    height: 13px;
+}
+
+.progress.thin .progress-bar {
+    line-height: 13px;
+}
+
+.progress.x-thin {
+    height: 9px;
+    margin-bottom: 5px;
+}
+
+.progress.x-thin .progress-bar {
+    line-height: 10px;
+    font-size: 9px;
+}
+
+blockquote > p {
+    font-size: 0.8em;
+}
+
+.logo-container {
+    margin: 5em 0 2em;
+}
+
+.js-expandable .panel-heading {
+    cursor: pointer;
+}
+
+.list-summary {
+    margin: 20px 0;
+}
+
+.modal .modal-body {
+    height: auto;
+    max-height: 85vh;
+    overflow: auto;
+}
+
+#timeline-container {
+    position: relative;
+}
+
+#timeline-loader {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background: #fff;
+    text-align: center;
+}
+
+#timeline-loader .helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#timeline-loader img {
+    vertical-align: middle;
+    margin-top: -40px;
+}
+
+.timeline-event {
+    overflow: visible !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 4px !important;
+}
+
+.timeline-event-content {
+    margin: 0 !important;
+    overflow: visible !important;
+    border: none !important;
+    border-radius: 2px;
+
+}
+
+.timeline-event .progress {
+    overflow: visible !important;
+    margin: 0;
+}
+.timeline-event .progress-bar {
+    color: #000;
+    overflow: visible !important;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    padding-left: 5px;
+
+}
+
+.action-buttons .btn {
+    padding: 10px 20px;
+}
+
+.btn.phone-button,
+.btn.voicemail-button,
+.btn.email-button
+{
+    background-position: center center;
+    background-repeat: no-repeat;
+    text-indent: -9999px;
+}
+
+.btn.phone-button {
+    background-image: url('../images/phone.png');
+}
+.btn.voicemail-button {
+    background-image: url('../images/voicemail.png');
+}
+.btn.email-button {
+    background-image: url('../images/email.png');
+}
+
+.step-panel {
+    .progress {
+        display: inline-block;
+        margin: 0 0 0 1em;
+        min-width: 10em;
+        border-radius: 0;
+        border: 1px solid #cbc9c9;
+
+        &.x-thin {
+            height: 12px;
+            .progress-bar {
+                line-height: 12px;
+                font-size: 9px;
+            }
+        }
+    }
+}
+
+.badge {
+    margin: 0 5px;
+    &.label-danger{
+        background-color: #d9534f;
+    }
+}
+
+.qr-image {
+    width: 100%;
+    height: 100px;
+    &:hover {
+        overflow: visible;
+        position: absolute;
+        margin: 0 auto;
+        img.small {
+            max-height: none;
+            height: auto;
+        }
+        &+strong {
+            margin-top: 100px;
+            display: inline-block;
+        }
+    }
+    img.small {
+        max-height: 100px;
+        cursor: pointer;
+    }
+}
+
+.fc td {
+    position: relative;
+    .fc-content {
+        padding: 3px;
+    }
+    .remove-event {
+        position: absolute;
+        top: 0;
+        left: 100% !important;
+        margin-left: -10px;
+        margin-top: -5px;
+        border-radius: 8px;
+        background: rgb(255, 107, 107);
+        color: #fff;
+        width: 16px;
+        height: 16px;
+        text-align: center;
+        line-height: 16px;
+        cursor: pointer;
+    }
+    .remove-event:hover {
+        background: rgb(179, 75, 75);
+        color: #fff;
+    }
+}
+
+.document-gdrive {
+    background: transparent url('../images/Google-Drive-icon.png') no-repeat scroll center left ;
+    padding-left: 28px;
+}
+.document-dropbox {
+    background: transparent url('../images/Dropbox-icon.png') no-repeat scroll center left ;
+    padding-left: 28px;
+}
+.document-doctini {
+    background: transparent url('../images/Doctini-icon.png') no-repeat scroll center left ;
+    padding-left: 28px;
+}
+
+.list-items {
+    position: relative;
+    .delete {
+        position: absolute;
+        margin-top: -30px;
+        right: 1%;
+    }
+}
+
+.panel-heading {
+    .step-actions {
+        margin-top: -1.7em;
+    }
+}
+
+a.list-group-item.item-note,
+a.list-group-item.item-clientnote,
+{
+    .list-group-item-heading {
+        font-size: 0.9em;
+        color: #aeaeae;
+    }
+}
