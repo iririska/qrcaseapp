@@ -3,5 +3,5 @@
 node_modules
 dist
 /assets
-/gr
+/qr
 /protected/runtime
