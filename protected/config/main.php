@@ -8,7 +8,7 @@
 
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'CRM',
+	'name'=>'QR Case App',
 
 	'sourceLanguage' => 'en',
 	'language' => 'en_US',
@@ -19,8 +19,8 @@ return array(
 		'bootstrap' => realpath(__DIR__ . '/../vendor/yiistrap/'),
 		'yiiwheels' => realpath(__DIR__ . '/../vendor/yiiwheels'),
 		'booster' =>  realpath(__DIR__ . '/../vendor/yiibooster'),
-		'fullcalendar' =>  realpath(__DIR__ . '/../vendor/fullcalendar-2.2.0'),
-		'googleapi' =>  realpath(__DIR__ . '/../vendor/google-api-php-client-read-only/src'),
+        'dhtmlscheduler' => realpath(__DIR__ . '/../vendor/dhtml-scheduler'),
+		'googleapi' =>  realpath(__DIR__ . '/../vendor/google-api-php-client'),
 	),
 
 	// preloading 'log' component
@@ -37,8 +37,7 @@ return array(
 		'bootstrap.helpers.*',
 		'bootstrap.widgets.*',
 
-		'googleapi.*',
-		'googleapi.contrib.Google_CalendarService',
+		'googleapi.GoogleCalendarProxy',
 
 		/*'application.modules.auth.*',
 		'application.modules.auth.components.*',*/
@@ -141,8 +140,10 @@ return array(
 				array(
 					'connectionString' => 'mysql:host=localhost;dbname=qrcaseap_app',
 					'emulatePrepare'   => true,
-					'username'         => 'qrcaseap_usr',
-					'password'         => '2KVlOeTy#l#@',
+					//'username'         => 'qrcaseap_usr',
+					//'password'         => '2KVlOeTy#l#@',
+                    'username'         => 'root',
+                    'password'         => '',
 					'charset'          => 'utf8',
 				)
 	,
@@ -170,5 +171,5 @@ return array(
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
-	'params'=>require_once dirname(__FILE__).'/params.php',
+	'params' => require_once dirname(__FILE__) . '/params.php',
 );

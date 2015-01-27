@@ -22,7 +22,7 @@ class QRController extends Controller
 	{
 		return array(
 			array('allow', // admin permissions
-				'actions'=>array('generator', 'image'),
+				'actions'=>array('generator', 'image', 'print'),
 				'users'=>array('@'),
 			),
 
@@ -74,6 +74,31 @@ class QRController extends Controller
 		$this->render('generator',array());
 
 	}
+
+    /**
+     * @param $c
+     * @param $id
+     * @throws CHttpException
+     */
+    public function actionPrint($c, $id){
+        /* @var $client Client */
+        $client = Client::model()->findByPk($c);
+
+        $image = $this->getQRImage(
+            Yii::app()->createAbsoluteUrl( "workflow/view", array(
+                "id" => $client->current_workflow->id,
+                "c"  => $client->id
+            ) )
+        );
+
+        if (!$client) throw new CHttpException(404, 'No such client exists');
+
+        if ($id != $client->current_workflow->id) throw new CHttpException(404, 'No such workflow for this client');
+
+        if (empty($image) || !file_exists(realpath( Yii::getPathOfAlias( 'webroot.qr' ) .'/' . basename($image) ))) throw new CHttpException(404, 'No such QR code exits');
+
+        $this->render("qr_print", array('image'=>$image, 'client'=>$client));
+    }
 
 
 

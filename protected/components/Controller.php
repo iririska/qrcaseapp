@@ -25,7 +25,14 @@ class Controller extends CController
 	public $attorney_actions = 0; //indicator
 
 	protected function beforeRender( $view ) {
-		if (Yii::app()->user->checkAccess('admin')) {
+
+        Yii::app()->clientScript->scriptMap=array(
+            //'bootstrap.js'=>false,
+            'bootstrap.min.js'=>false,
+        );
+
+
+        if (Yii::app()->user->checkAccess('admin')) {
 			$this->issues = Yii::app()->db->createCommand( "SELECT count(*) FROM OutstandingIssues oi WHERE oi.status = '1'" )->queryScalar();
 			$this->attorney_actions = Yii::app()->db->createCommand( "SELECT count(*) FROM AttorneyActions aa WHERE aa.status = '1'" )->queryScalar();
 		}
@@ -64,4 +71,10 @@ class Controller extends CController
 
 		return $url;
 	}
+
+    public static function validateDate($date, $format = 'm/d/Y')
+    {
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) == $date;
+    }
 }

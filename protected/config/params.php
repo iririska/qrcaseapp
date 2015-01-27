@@ -7,4 +7,5 @@ return array(
 	'rowColors' => array(
 
 	),
+    'googleApiConfig' =>  require_once dirname(__FILE__) . '/google_api.php',
 );

@@ -40,7 +40,7 @@
 						echo sprintf("<strong>Start date:</strong> %s <br>", date(Yii::app()->params['shortDateFormat'], strtotime($dates['date_start'])));
 						echo sprintf("<strong>End date:</strong> %s <br>", date(Yii::app()->params['shortDateFormat'], strtotime($dates['date_end'])));
 
-						//echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r(urlencode('http://ctcommerce.com/CRM/index.php?r=workflow/view&id=33&c=32'), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
+						//echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r(urlencode('http://qrcaseapp.com/index.php?r=workflow/view&id=33&c=32'), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
 
 						?>
 					</div>

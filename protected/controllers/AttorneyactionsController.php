@@ -28,7 +28,7 @@ class AttorneyactionsController extends Controller
 	{
 		return array(
 			array('allow', // admin permissions
-				'actions'=>array('admin', 'update', 'delete'),
+				'actions'=>array('admin', 'update', 'delete', 'create'),
 				'roles'=>array('admin'),
 			),
 

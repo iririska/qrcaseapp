@@ -251,7 +251,7 @@ class DocumentController extends Controller {
 	 * @param DocumentListTemplate $model the model to be validated
 	 */
 	protected function performAjaxValidation( $model ) {
-		if ( isset( $_POST['ajax'] ) && $_POST['ajax'] === 'outstanding-issues-form' ) {
+		if ( isset( $_POST['ajax'] ) && $_POST['ajax'] === 'document-add-form' ) {
 			echo CActiveForm::validate( $model );
 			Yii::app()->end();
 		}
@@ -276,7 +276,7 @@ class DocumentController extends Controller {
 		$model->workflow_id = (int) $wid;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if ( isset( $_POST['Document'] ) ) {
 			$model->attributes = $_POST['Document'];
@@ -285,7 +285,7 @@ class DocumentController extends Controller {
 					echo CJSON::encode( array(
 						'status'  => 'success',
 						'message' => 'Document successfully added',
-						//'debug' => $model,
+						'debug' => $model,
 					) );
 					Yii::app()->end();
 				} else {
@@ -295,7 +295,16 @@ class DocumentController extends Controller {
 						'c'  => $model->workflow->client_id
 					) );
 				}
-			}
+			} else {
+                if (Yii::app()->request->isAjaxRequest) {
+                    echo CJSON::encode(array(
+                        'status' => 'error',
+                        'message' => 'Error adding document',
+                        'debug' => $model,
+                    ));
+                    Yii::app()->end();
+                }
+            }
 		}
 
 		/*if (Yii::app()->request->isAjaxRequest) {
@@ -319,6 +328,7 @@ class DocumentController extends Controller {
 			$cs            = Yii::app()->clientScript;
 			$cs->scriptMap = array(
 				'jquery.js' => false,
+                'yiiactiveform' => false,
 			);
 			echo CJSON::encode(
 				array(

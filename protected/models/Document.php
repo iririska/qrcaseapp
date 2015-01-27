@@ -10,6 +10,7 @@
  * @property string $document_link
  * @property string $created
  * @property string $updated
+ * @property string $workflow_id
  *
  * The followings are the available model relations:
  * @property DocumentList $documentList

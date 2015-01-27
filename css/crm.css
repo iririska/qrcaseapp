@@ -114,6 +114,7 @@ blockquote > p {
 .qr-image {
   width: 100%;
   height: 100px;
+  position: relative;
 }
 .qr-image:hover {
   overflow: visible;
@@ -124,6 +125,9 @@ blockquote > p {
   max-height: none;
   height: auto;
 }
+.qr-image:hover img.small + .qr-print {
+  opacity: 1;
+}
 .qr-image:hover + strong {
   margin-top: 100px;
   display: inline-block;
@@ -131,6 +135,16 @@ blockquote > p {
 .qr-image img.small {
   max-height: 100px;
   cursor: pointer;
+}
+.qr-image img.small + .qr-print {
+  margin: 0 3px;
+  cursor: pointer;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  padding: 5px;
+  position: absolute;
+  top: 0;
+  opacity: 0;
 }
 .fc td {
   position: relative;
@@ -184,4 +198,69 @@ a.list-group-item.item-note .list-group-item-heading,
 a.list-group-item.item-clientnote .list-group-item-heading {
   font-size: 0.9em;
   color: #aeaeae;
+}
+.errorMessage {
+  color: #f90000;
+}
+.list-view-loading {
+  position: relative;
+}
+.list-view-loading * {
+  opacity: 0.5;
+}
+.list-view-loading:after {
+  content: "Loading ... ";
+  font-size: 1.5em;
+  left: calc(50% - 50px);
+  position: absolute;
+  top: calc(50% - 10px);
+}
+.print-qr-page .print-btn-lg {
+  font-size: 3em;
+  margin: 0.5em;
+}
+.print-qr-page .print-btn-lg span {
+  cursor: pointer;
+}
+.print-qr-page .print-qr-image {
+  margin: 2em 0 ;
+}
+#more-calendar-info {
+  text-decoration: underline;
+}
+#hint-more-gcal {
+  display: none;
+}
+#hint-more-gcal .bg-warning {
+  border: 1px solid #fdf15c;
+  background: #fdf0ac;
+  padding: 1em;
+}
+#hint-more-gcal dt {
+  width: 20%;
+  display: inline-block;
+  vertical-align: top;
+  color: #b6b6b6;
+}
+#hint-more-gcal dt small {
+  color: #9c9c9c;
+  display: block;
+  font-weight: normal;
+}
+#hint-more-gcal dd {
+  display: inline-block;
+  width: 79%;
+  margin-bottom: 2em;
+}
+#hint-more-gcal dd li em {
+  color: red;
+  font-weight: bold;
+}
+.help-block{
+  font-size: 11px;
+}
+.alert-danger, .alert-error {
+  background-color: #f2dede;
+  border-color: #eed3d7;
+  color: #b94a48;
 }

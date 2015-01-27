@@ -50,6 +50,9 @@ class WorkflowController extends Controller
 	 */
 	public function actionView($id=null)
 	{
+
+        //sleep( 10 );
+
 		if (empty($id)) {
 			throw new CHttpException("custom-400", Yii::t('app', 'Workflow error. Case type not assigned to the client? Please ' . CHtml::link('edit client', array('client/update', 'id'=>Yii::app()->request->getParam('c')))));
 		}
@@ -66,6 +69,9 @@ class WorkflowController extends Controller
 			Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/daterangepicker-bs3.css' )
 		);
 
+        Yii::app()->getClientScript()->registerScriptFile(
+			Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.mask'). '/jquery.mask.min.js' ), CClientScript::POS_END
+		);
 
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
@@ -282,7 +288,8 @@ class WorkflowController extends Controller
 	public function actionDocumentDelete($id)
 	{
 		//TODO check access
-		Document::model()->findByPk($id)->delete();
+		$model = Document::model()->findByPk($id);
+        if ($model) $model->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

@@ -10,7 +10,7 @@
 </a>
 
 <?php
-echo CHtml::ajaxLink( '<span class="glyphicon glyphicon-trash"></span>',
+/*echo CHtml::ajaxLink( '<span class="glyphicon glyphicon-trash"></span>',
     $this->createUrl( 'workflow/documentdelete', array( 'id' => $data->id, 'ajax' => 'delete' ) ),
     array(
         'type'     => 'POST',
@@ -26,5 +26,12 @@ echo CHtml::ajaxLink( '<span class="glyphicon glyphicon-trash"></span>',
         'class'=>'delete',
     )
 
+);*/
+
+echo CHtml::link( '<span class="glyphicon glyphicon-trash"></span>',
+    $this->createUrl( 'workflow/documentdelete', array( 'id' => $data->id, 'ajax' => 'delete' ) ),
+    array(
+        'class'=>'delete',
+    )
 );
 ?>

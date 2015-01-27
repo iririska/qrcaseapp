@@ -16,6 +16,7 @@ class ClientController extends Controller
 		return array(
 			'accessControl', // perform access control for CRUD operations
 			'postOnly + delete', // we only allow deletion via POST request
+            array('booster.filters.BoosterFilter - delete'),
 		);
 	}
 
@@ -62,24 +63,126 @@ class ClientController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Client;
+
+        /*echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r($service->calendarList->listCalendarList(), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
+
+        $rule = new Google_AclRule ();
+        $scope = new Google_AclRuleScope();
+
+        $scope->setType("user");
+        $scope->setValue("180333236740-g7cq40idglikjnumfg65310ujuesk653@developer.gserviceaccount.com");
+        $rule->setScope($scope);
+        $rule->setRole("owner");
+
+        echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r($service->acl->listAcl($calendar->getId()), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
+
+        try {
+            $event = new Google_Event();
+            $event->setSummary( 'test event 2' );
+            //$event->setLocation( $model->location );
+            //$event->setDescription( $model->description );
+
+            $start = new Google_EventDateTime();
+            $start->setDateTime( date('c', strtotime('2015-02-05')) );
+            $start->setTimeZone( 'America/Los_Angeles' );
+            $event->setStart( $start );
+
+            if (!empty($model->end)) {
+                $end = new Google_EventDateTime();
+                $end->setDateTime( date('c', strtotime('2015-02-06')) );
+                $end->setTimeZone( 'America/Los_Angeles' );
+                $event->setEnd( $end );
+            } else {
+                $end = new Google_EventDateTime();
+                $end->setDateTime( date('c', strtotime('2015-02-05')+24*3600) );
+                $end->setTimeZone( 'America/Los_Angeles' );
+                $event->setEnd( $end );
+            }
+
+            $insertedEvent = $service->events->insert( $calendar->getId(), $event );
+            Yii::log("GOOGLE CALENDAR ERROR\n------------\n" . print_r($insertedEvent->getId(),1) . "\n------------------\n");
+        } catch(Google_ServiceException $e) {
+            Yii::log("GOOGLE CALENDAR ERROR\n------------\n" . print_r($e->getMessage(),1) . "\n------------------\n");
+        }
+
+        echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r($service->events->listEvents(
+                $calendar->getID()
+
+            ), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
+
+        echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r($rule->getId(), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
+        exit;
+
+
+        $calendarEntry = new Google_CalendarListEntry();
+        $calendarEntry->setId($calendar->getId());
+        $calendarEntry->setSelected(true);
+
+        $defaultReminders[0] = new Google_EventReminder();
+        $defaultReminders[0]->setMethod('sms');
+        $defaultReminders[0]->setMinutes('30');
+        $defaultReminders[1] = new Google_EventReminder();
+        $defaultReminders[1]->setMethod('email');
+        $defaultReminders[1]->setMinutes('60');
+
+        $calendarEntry->setDefaultReminders($defaultReminders);
+
+
+        $createdEntry = $service->calendarList->insert($calendarEntry);
+
+        echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r($service->calendars->get('5fl2ffgrqd4drmppv24pppnjq4@group.calendar.google.com'), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
+
+        echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r($service->calendarList->listCalendarList()->getItems(), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
+
+        exit;*/
+        //====================================================================================
+        //====================================================================================
+
+        Yii::app()->getClientScript()->registerScriptFile(
+            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/moment.min.js' ), CClientScript::POS_END
+        );
+
+        Yii::app()->getClientScript()->registerScriptFile(
+            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/daterangepicker.js' ), CClientScript::POS_END
+        );
+
+        Yii::app()->getClientScript()->registerCssFile(
+            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/daterangepicker-bs3.css' )
+        );
+
+        $model=new Client;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if (isset($_POST['Client'])) {
+
 			$model->attributes=$_POST['Client'];
 			//$model->email = rand().$model->email;//TODO remove
-			if ($model->save()) {
 
-				// create workflow togther with steps from WorkflowStepsByType
+            if ($model->validate() && empty($model->google_calendar_id)) $model->google_calendar_id = $this->_getNewCalendar();
+
+            if ($model->save()) {
+
+                // create workflow togther with steps from WorkflowStepsByType
 				// @see app/models/Workflow::afterSave
 				$workflow = new Workflow();
 				$workflow->client_id = $model->id;
 				$workflow->case_type = $model->case_type;
 				$workflow->save();
 
-				$this->redirect(array('workflow/view','id'=>$workflow->id, 'c'=>$model->id));
+                $documentTemplate = DocumentListTemplate::model()->findByPk($model->document_list_id);
+                if ($documentTemplate) {
+                    foreach ($documentTemplate->documentTemplates as $_document) {
+                        $doc = new Document();
+                        $doc->attributes = $_document->attributes;
+                        $doc->workflow_id = $workflow->id;
+                        $doc->save();
+                    }
+
+                }
+
+                $this->redirect(array('workflow/view','id'=>$workflow->id, 'c'=>$model->id));
 
 			}
 		}
@@ -96,7 +199,19 @@ class ClientController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		/* @var Client $model*/
+        Yii::app()->getClientScript()->registerScriptFile(
+            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/moment.min.js' ), CClientScript::POS_END
+        );
+
+        Yii::app()->getClientScript()->registerScriptFile(
+            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/daterangepicker.js' ), CClientScript::POS_END
+        );
+
+        Yii::app()->getClientScript()->registerCssFile(
+            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/daterangepicker-bs3.css' )
+        );
+
+        /* @var Client $model*/
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -211,4 +326,25 @@ class ClientController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+    private function _getNewCalendar(){
+
+        $service = $this->_getGoogleService();
+
+        /* @var Google_CalendarListEntry $_calendar */
+        foreach ($service->calendarList->listCalendarList()->getItems() as $_calendar) {
+            if ( strpos($_calendar->getSummary(), 'CRM') === false ) $service->calendarList->delete($_calendar->getId());
+        }
+
+        $calendar = new Google_Calendar();
+        $calendar->setSummary('Test Calendar 2');
+        $calendar->setTimeZone('America/Los_Angeles');
+
+
+        $calendar = $service->calendars->insert($calendar);
+
+        return $calendar->getId();
+    }
+
+
 }

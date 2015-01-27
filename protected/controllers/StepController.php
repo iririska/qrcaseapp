@@ -202,8 +202,6 @@ class StepController extends Controller
 					$attorneyattn->author = Yii::app()->user->id;
 					$attorneyattn->save();
 				}
-
-				echo '<pre style="color:red; text-align:left; background:white; white-space: pre-wrap">' . print_r($attorneyattn->getErrors(), 1).'</pre><small>'.__FILE__.': '.__LINE__.'</small>';
 			}
 			echo CJSON::encode(array(
 				'status'=>'success',

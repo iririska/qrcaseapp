@@ -20,6 +20,7 @@ Yii::app()->bootstrap->register();
 	<title><?php echo CHtml::encode( $this->pageTitle ); ?></title>
 
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->getBaseUrl();?>/css/crm.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->getBaseUrl();?>/css/print.css" media="print" />
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->getBaseUrl();?>/css/bootstrap.vertical-tabs.css" media="screen" />
 
 

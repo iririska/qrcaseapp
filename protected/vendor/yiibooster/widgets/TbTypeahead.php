@@ -82,12 +82,59 @@ class TbTypeahead extends TbBaseInputWidget {
 			echo CHtml::textField($name, $this->value, $this->htmlOptions);
 		}
 
-		$this->datasets['source'] = 'js:substringMatcher(_'.$this->id.'_source_list)';
+		$this->datasets['source'] = 'js:_'.$this->id.'_source_list'; //'js:substringMatcher(_'.$this->id.'_source_list)';
 		
 		$options = CJavaScript::encode($this->options);
 		$datasets = CJavaScript::encode($this->datasets);
+
+        $_id = $this->id;
+        $_source = CJavaScript::encode($this->datasets['source']);
 		
-		Yii::app()->clientScript->registerScript(__CLASS__ . '#' . $id, "jQuery('#{$id}').typeahead({$options}, {$datasets});");
+		Yii::app()->clientScript->registerScript(__CLASS__ . '#' . $id,
+<<<JS
+ var substringMatcher = function(strs) {
+  return function findMatches(q, cb) {
+    var matches, substrRegex;
+
+    // an array that will be populated with substring matches
+    matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    substrRegex = new RegExp(q, 'i');
+
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, function(i, str) {
+      if (substrRegex.test(str.label)) {
+        // the typeahead jQuery plugin expects suggestions to a
+        // JavaScript object, refer to typeahead docs for more info
+        matches.push(str);
+      }
+    });
+
+    cb(matches);
+  };
+};
+
+var states = {$_source};
+
+jQuery('#{$id}').typeahead({
+  hint: true,
+  highlight: true,
+  minLength: 1
+},
+{
+  name: 'client',
+  valueKey: 'id',
+  displayKey: 'label',
+  source: substringMatcher(states)
+})
+.on('typeahead:selected', function (e, suggestion, dataset) {
+    console.log(suggestion);
+});
+
+JS
+        );
 		
 	}
 

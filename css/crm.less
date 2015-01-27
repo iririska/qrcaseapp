@@ -141,6 +141,7 @@ blockquote > p {
 .qr-image {
     width: 100%;
     height: 100px;
+    position: relative;
     &:hover {
         overflow: visible;
         position: absolute;
@@ -148,6 +149,9 @@ blockquote > p {
         img.small {
             max-height: none;
             height: auto;
+            +.qr-print {
+              opacity: 1;
+            }
         }
         &+strong {
             margin-top: 100px;
@@ -157,6 +161,16 @@ blockquote > p {
     img.small {
         max-height: 100px;
         cursor: pointer;
+        +.qr-print {
+          margin: 0 3px;
+          cursor: pointer;
+          border: 1px solid #dddddd;
+          border-radius: 3px;
+          padding: 5px;
+          position: absolute;
+          top: 0;
+          opacity: 0;
+        }
     }
 }
 
@@ -221,4 +235,83 @@ a.list-group-item.item-clientnote,
         font-size: 0.9em;
         color: #aeaeae;
     }
+}
+
+.errorMessage {
+  color: #f90000;
+}
+
+.list-view-loading {
+  position: relative;
+  * {
+    opacity: 0.5;
+  }
+  &:after {
+    content: "Loading ... ";
+    font-size: 1.5em;
+    left: ~"calc(50% - 50px)";
+    position: absolute;
+    top: ~"calc(50% - 10px)";
+  }
+}
+
+.print-qr-page {
+  .print-btn-lg {
+    font-size: 3em;
+    margin:0.5em;
+    span {
+      cursor: pointer;
+    }
+  }
+
+  .print-qr-image {
+    margin: 2em 0 ;
+  }
+
+}
+
+#more-calendar-info {
+  text-decoration: underline;
+}
+
+#hint-more-gcal {
+  display: none;
+  .bg-warning {
+    border: 1px solid #fdf15c;
+    background: #fdf0ac;
+    padding: 1em;
+  }
+
+  dt {
+    width: 20%;
+    display: inline-block;
+    vertical-align: top;
+    color: #b6b6b6;
+    small {
+      color: #9c9c9c;
+      display: block;
+      font-weight: normal;
+    }
+  }
+
+  dd {
+    display: inline-block;
+    width: 79%;
+    margin-bottom: 2em;
+    li {
+      em {
+        color: red;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.help-block{
+    font-size: 11px;
+}
+.alert-danger, .alert-error {
+    background-color: #f2dede;
+    border-color: #eed3d7;
+    color: #b94a48;
 }

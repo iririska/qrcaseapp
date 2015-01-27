@@ -58,16 +58,19 @@
 
 	<?php echo $form->textAreaControlGroup( $model, 'content', array( 'span' => 10, 'rows'=>10 ) ); ?>
 
-	<div class="form-actions">
+	<div class="modal-footer">
 		<?php
-		//echo TbHtml::hiddenField('step_id');
-		echo TbHtml::link( 'Cancel', array( 'client/admin' ), array( 'style' => 'margin-right: 5em;', 'class'=> ((Yii::app()->request->isAjaxRequest)?'close-modal':'') ) );
-
 		echo TbHtml::submitButton( $model->isNewRecord ? 'Create' : 'Save', array(
 			'color' => TbHtml::BUTTON_COLOR_PRIMARY,
-			'size'  => TbHtml::BUTTON_SIZE_LARGE,
+			'size'  => TbHtml::BUTTON_SIZE_DEFAULT,
 			'id' => 'add-step-note-submit'
-		) ); ?>
+		) ); 
+
+		echo TbHtml::Button( 'Cancel', array( 
+				'size'  => TbHtml::BUTTON_SIZE_DEFAULT,
+				'class'=> (Yii::app()->request->isAjaxRequest)?'close-modal':''
+			) 
+		);?>
 	</div>
 
 	<?php $this->endWidget(); ?>

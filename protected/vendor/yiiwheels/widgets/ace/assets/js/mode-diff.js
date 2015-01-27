@@ -26,106 +26,106 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * ***** END LICENSE BLOCK ***** */
-
-define('ace/mode/diff', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/diff_highlight_rules', 'ace/mode/folding/diff'], function(require, exports, module) {
-
-
-var oop = require("../lib/oop");
-var TextMode = require("./text").Mode;
-var Tokenizer = require("../tokenizer").Tokenizer;
-var HighlightRules = require("./diff_highlight_rules").DiffHighlightRules;
-var FoldMode = require("./folding/diff").FoldMode;
-
-var Mode = function() {
-    this.$tokenizer = new Tokenizer(new HighlightRules().getRules());
+ * ***** END LICENSE BLOCK ***** */
+
+define('ace/mode/diff', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/diff_highlight_rules', 'ace/mode/folding/diff'], function(require, exports, module) {
+
+
+var oop = require("../lib/oop");
+var TextMode = require("./text").Mode;
+var Tokenizer = require("../tokenizer").Tokenizer;
+var HighlightRules = require("./diff_highlight_rules").DiffHighlightRules;
+var FoldMode = require("./folding/diff").FoldMode;
+
+var Mode = function() {
+    this.$tokenizer = new Tokenizer(new HighlightRules().getRules());
     this.foldingRules = new FoldMode(["diff", "index", "\\+{3}", "@@|\\*{5}"], "i");
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-
-}).call(Mode.prototype);
-
-exports.Mode = Mode;
-
-});
-
-define('ace/mode/diff_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-
-
-var oop = require("../lib/oop");
-var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-
-var DiffHighlightRules = function() {
-
-    this.$rules = {
-        "start" : [{
-                regex: "^(?:\\*{15}|={67}|-{3}|\\+{3})$",
-                token: "punctuation.definition.separator.diff",
-                "name": "keyword"
-            }, { //diff.range.unified
-                regex: "^(@@)(\\s*.+?\\s*)(@@)(.*)$",
-                token: [
-                    "constant",
-                    "constant.numeric",
-                    "constant",
-                    "comment.doc.tag"
-                ]
-            }, { //diff.range.normal
-                regex: "^(\\d+)([,\\d]+)(a|d|c)(\\d+)([,\\d]+)(.*)$",
-                token: [
-                    "constant.numeric",
-                    "punctuation.definition.range.diff",
-                    "constant.function",
-                    "constant.numeric",
-                    "punctuation.definition.range.diff",
-                    "invalid"
-                ],
-                "name": "meta."
-            }, {
+};
+oop.inherits(Mode, TextMode);
+
+(function() {
+
+}).call(Mode.prototype);
+
+exports.Mode = Mode;
+
+});
+
+define('ace/mode/diff_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
+
+
+var oop = require("../lib/oop");
+var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
+
+var DiffHighlightRules = function() {
+
+    this.$rules = {
+        "start" : [{
+                regex: "^(?:\\*{15}|={67}|-{3}|\\+{3})$",
+                token: "punctuation.definition.separator.diff",
+                "name": "keyword"
+            }, { //diff.range.unified
+                regex: "^(@@)(\\s*.+?\\s*)(@@)(.*)$",
+                token: [
+                    "constant",
+                    "constant.numeric",
+                    "constant",
+                    "comment.doc.tag"
+                ]
+            }, { //diff.range.normal
+                regex: "^(\\d+)([,\\d]+)(a|d|c)(\\d+)([,\\d]+)(.*)$",
+                token: [
+                    "constant.numeric",
+                    "punctuation.definition.range.diff",
+                    "constant.function",
+                    "constant.numeric",
+                    "punctuation.definition.range.diff",
+                    "invalid"
+                ],
+                "name": "meta."
+            }, {
                 regex: "^(\\-{3}|\\+{3}|\\*{3})( .+)$",
                 token: [
-                    "constant.numeric",
-                    "meta.tag"
-                ]
-            }, { // added
-                regex: "^([!+>])(.*?)(\\s*)$",
-                token: [
-                    "support.constant",
-                    "text",
-                    "invalid"
-                ]
-            }, { // removed
-                regex: "^([<\\-])(.*?)(\\s*)$",
-                token: [
-                    "support.function",
-                    "string",
-                    "invalid"
-                ]
-            }, {
-                regex: "^(diff)(\\s+--\\w+)?(.+?)( .+)?$",
-                token: ["variable", "variable", "keyword", "variable"]
-            }, {
-                regex: "^Index.+$",
-                token: "variable"
-            }, {
+                    "constant.numeric",
+                    "meta.tag"
+                ]
+            }, { // added
+                regex: "^([!+>])(.*?)(\\s*)$",
+                token: [
+                    "support.constant",
+                    "text",
+                    "invalid"
+                ]
+            }, { // removed
+                regex: "^([<\\-])(.*?)(\\s*)$",
+                token: [
+                    "support.function",
+                    "string",
+                    "invalid"
+                ]
+            }, {
+                regex: "^(diff)(\\s+--\\w+)?(.+?)( .+)?$",
+                token: ["variable", "variable", "keyword", "variable"]
+            }, {
+                regex: "^Index.+$",
+                token: "variable"
+            }, {
                 regex: "^\\s+$",
                 token: "text"
-            }, {
+            }, {
                 regex: "\\s*$",
                 token: "invalid"
             }, {
                 defaultToken: "invisible",
                 caseInsensitive: true
-            }
-        ]
-    };
-};
-
-oop.inherits(DiffHighlightRules, TextHighlightRules);
-
-exports.DiffHighlightRules = DiffHighlightRules;
+            }
+        ]
+    };
+};
+
+oop.inherits(DiffHighlightRules, TextHighlightRules);
+
+exports.DiffHighlightRules = DiffHighlightRules;
 });
 
 define('ace/mode/folding/diff', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {

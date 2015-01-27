@@ -37,18 +37,32 @@ $this->breadcrumbs = array(
 			</div>
 			<!--			Progress Bar END -->
 
-			<div class="col-md-5 text-left btn-group action-buttons">
-				<a class="btn btn-success phone-button" title="Phone" data-activity="phone" data-placeholderText="Phonecall to client">phone</a>
-				<a class="btn btn-success voicemail-button" title="voicemail" data-activity="voice"  data-placeholderText="Voicemail to client">voice</a>
-				<a class="btn btn-success email-button" title="email" data-activity="email" data-placeholderText="Email to client">email</a>
-			</div>
+            <div class="row">
+                <div class="col-md-5 text-left btn-group action-buttons panel-group">
+                    <a class="btn btn-success phone-button" title="Phone" data-activity="phone" data-placeholderText="Phonecall to client">phone</a>
+                    <a class="btn btn-success voicemail-button" title="voicemail" data-activity="voice"  data-placeholderText="Voicemail to client">voice</a>
+                    <a class="btn btn-success email-button" title="email" data-activity="email" data-placeholderText="Email to client">email</a>
+                </div>
 
-			<div class="col-md-7 pull-right btn-group action-buttons">
-				<a class="btn btn-danger btn-primary">Dropbox</a>
-				<a class="btn btn-danger btn-success">Google Drive</a>
-				<a class="btn btn-danger btn-danger">Doctini</a>
-			</div>
-
+                <div class="col-md-7 pull-right btn-group action-buttons">
+                    <a class="btn btn-danger btn-primary">Dropbox</a>
+                    <a class="btn btn-danger btn-success">Google Drive</a>
+                    <a class="btn btn-danger btn-danger">Doctini</a>
+                </div>
+                <div class="clearfix visible-xs-block"></div>
+                <div class="col-md-12">
+                	<?php 
+						echo TbHtml::linkButton('Send Text', 
+							array(
+								'color' => TbHtml::BUTTON_COLOR_INFO,
+								'size'  => TbHtml::BUTTON_SIZE_SM,
+								'class' => 'js_send_sms',
+								'url' => array('sms/create')
+							)
+						);
+                	?>
+                </div>
+            </div>
 		</div>
 
 		<div class="col-md-4">
@@ -574,7 +588,7 @@ content;
 			<?php $this->widget( '\TbListView', array(
 				'dataProvider' => $model->getDocumentsProvider(),
 				'itemView'     => '//document/_viewitem',
-				'viewData' => array('listview_id'=>'documents-'.$model->id),
+				'viewData' => array('listview_id'=>'documents-list'),
 				'id'=>'documents-list',
 			) );
 			?>
@@ -610,7 +624,7 @@ content;
 			if (!$('#collapse-add-client-note').hasClass('in')) $('#collapse-add-client-note').prev().trigger('click');
 		});
 
-		$('.add-note, .js-document-add').on('click', function (e) {
+		$('.add-note, .js-document-add, .js_send_sms').on('click', function (e) {
 			e.preventDefault();
 			el = $(this);
 			$.ajax({
@@ -627,11 +641,14 @@ content;
 				$(".bs-example-modal-lg .modal-title").html(data.heading);
 				$(".bs-example-modal-lg .modal-body").html(data.content);
 				$(".bs-example-modal-lg").modal('show');
+                if(el.hasClass('js_send_sms')){
+					$('#Sms_phone').mask('+99999999999#');
+				}
 			}).fail(function (jqXHR, textStatus, errorThrown) {
 
 			});
 
-			console.log($(this).attr('href'));
+			//console.log($(this).attr('href'));
 		});
 
 		$('body')
@@ -780,8 +797,7 @@ content;
 				}).fail(function(jqXHR, textStatus, errorThrown) {
 
 				});
-			});
-
+			})
 
 			$('.step-dates-ajax').each(function(e){
 				var el = $(this);
@@ -830,8 +846,19 @@ content;
 				$(".bs-example-modal-lg .modal-body").load(el.attr('href'));
 				$(".bs-example-modal-lg").modal('show');
 			});*/
-
-
+        $('body').on('click', '#documents-list a.delete', function(e){
+            e.preventDefault();
+            var el = $(this);
+            $.ajax({
+                type: 'POST',
+                url: el.attr('href'),
+                //data: el.parents("form").serialize()
+                cache: false
+            }).done(function ( data, textStatus, jqXHR ) {
+                $.fn.yiiListView.update("documents-list");
+            });
+            return false;
+        });
 	});
 
 	jQuery.fn.extend({
