@@ -262,7 +262,7 @@ class CalendarController extends Controller
 			$client->setRedirectUri('http://localhost/YII1-READYAPPS/yii-user-yii-auth?r=calendar/addevent');
 		} else {
 			$client->setClientId( '180333236740-5lupqsprb1glhdrtu3b9fa7h624qn2p2.apps.googleusercontent.com' );
-			$client->setRedirectUri('http://qrcaseapp.com/index.php?r=calendar/addevent');
+			$client->setRedirectUri('http://qrcaseapp.com/calendar/addevent');
 		}
 
 		$client->setAssertionCredentials(
@@ -326,7 +326,7 @@ class CalendarController extends Controller
 			$client->setRedirectUri('http://localhost/YII1-READYAPPS/yii-user-yii-auth?r=calendar/addevent');
 		} else {
 			$client->setClientId( '180333236740-5lupqsprb1glhdrtu3b9fa7h624qn2p2.apps.googleusercontent.com' );
-			$client->setRedirectUri('http://qrcaseapp.com/index.php?r=calendar/addevent');
+			$client->setRedirectUri('http://qrcaseapp.com/calendar/addevent');
 		}
 
 		$client->setAssertionCredentials(
