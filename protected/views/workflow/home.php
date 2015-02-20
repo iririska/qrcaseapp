@@ -8,10 +8,10 @@ $this->breadcrumbs = array(
 	'Home',
 );
 ?>
-
-<a href="<?php echo Yii::app()->createUrl('workflow/cases')?>" class="btn btn-primary pull-right">Expanded cases view</a>
-
-<h2>Cases Summary</h2>
+<a href="<?php echo Yii::app()->createUrl('workflow/cases')?>" class="btn btn-primary pull-right" style="margin-bottom: 10px;">Expanded cases view</a>
+    <div class="clearfix"></div>
+<fieldset>
+	<legend>Cases Summary</legend>
 
 <div class="row">
 	<div class="col-md-12">
@@ -23,15 +23,14 @@ $this->breadcrumbs = array(
 </div>
 
 
-<h2>Issues</h2>
+<legend>Issues</legend>
 
 <div class="row">
 	<div class="col-md-12">
 		<?php
-
 		$this->widget( '\TbGridView', array(
 			'id'                    => 'user-grid',
-			'dataProvider'          => $issues->search(),
+			'dataProvider'          => $issues->searchUIssues(),
 			'filter'                => null,//$model,
 			'rowCssClassExpression' => '$data->status == 0 ? " danger" : ""',
 			'pagerCssClass'         => 'list-pager',
@@ -72,16 +71,6 @@ $this->breadcrumbs = array(
 					'type'   => 'raw',
 					'value'  => '!empty($data->updated)?date(Yii::app()->params["fullDateFormat"], strtotime($data->updated)):""',
 				),
-				/*
-
-				'status',
-				'firstname',
-				'lastname',
-				'phone',
-				'phone2',
-				'address',
-				'case_type',
-				*/
 				array(
 					'header'   => '',
 					'class'    => 'bootstrap.widgets.TbButtonColumn',
@@ -90,37 +79,18 @@ $this->breadcrumbs = array(
 				),
 			),
 		) );
-		/*$this->widget('zii.widgets.grid.CGridView', array(
-			'id'=>'outstanding-issues-grid',
-			'dataProvider'=>$model->search(),
-			'filter'=>$model,
-			'columns'=>array(
-				'id',
-				'text',
-				'author',
-				'status',
-				'created',
-				'updated',
-				array(
-					'class'=>'CButtonColumn',
-				),
-			),
-		));*/
-
 		?>
 	</div>
 </div>
 
-
-
-<h2>Actions</h2>
+<legend>Actions</legend>
 
 <div class="row">
 	<div class="col-md-12">
 		<?php
             $this->widget('\TbGridView', array(
                 'id' => 'user-grid',
-                'dataProvider' => $actions->search(),
+                'dataProvider' => $actions->searchUAction(),
                 'filter' => null,//$model,
                 'rowCssClassExpression' => '$data->status == 0 ? " danger" : ""',
                 'pagerCssClass' => 'list-pager',
@@ -130,7 +100,6 @@ $this->breadcrumbs = array(
                 'type' => TbHtml::GRID_TYPE_STRIPED . ' ' . TbHtml::GRID_TYPE_BORDERED . ' ' . TbHtml::GRID_TYPE_HOVER . ' ' . TbHtml::GRID_TYPE_CONDENSED,
                 'columns' => array(
                     'id',
-                    'text',
                     array(
                         'name' => 'client_id',
                         'header' => 'Client',
@@ -161,16 +130,6 @@ $this->breadcrumbs = array(
                         'type' => 'raw',
                         'value' => '!empty($data->updated)?date(Yii::app()->params["fullDateFormat"], strtotime($data->updated)):""',
                     ),
-                    /*
-
-                    'status',
-                    'firstname',
-                    'lastname',
-                    'phone',
-                    'phone2',
-                    'address',
-                    'case_type',
-                    */
                     array(
                         'header' => '',
                         'class' => 'bootstrap.widgets.TbButtonColumn',
@@ -179,24 +138,7 @@ $this->breadcrumbs = array(
                     ),
                 ),
             ));
-		/*$this->widget('zii.widgets.grid.CGridView', array(
-			'id'=>'outstanding-issues-grid',
-			'dataProvider'=>$model->search(),
-			'filter'=>$model,
-			'columns'=>array(
-				'id',
-				'text',
-				'author',
-				'status',
-				'created',
-				'updated',
-				array(
-					'class'=>'CButtonColumn',
-				),
-			),
-		));*/
-
-		?>
+    	?>
 	</div>
 </div>
-
+</fieldset>

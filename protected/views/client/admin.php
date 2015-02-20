@@ -21,10 +21,10 @@ $('.search-form form').submit(function(){
 });
 " );
 ?>
+<fieldset>
+	<legend>Manage Clients</legend>
 
-	<h1>Manage Clients</h1>
-
-	<div class="col-md-16">
+	<div class="col-md-9" style="margin-bottom: 15px;">
 		<?php /*<p>
 	    You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>
 	        &lt;&gt;</b>
@@ -32,7 +32,7 @@ $('.search-form form').submit(function(){
 	</p> */
 		?>
 
-		<?php echo CHtml::link( 'Filter clients', '#', array( 'class' => 'search-button btn' ) ); ?>
+		<?php echo CHtml::link( 'Filter clients', '#', array( 'class' => 'search-button btn btn-default' ) ); ?>
 		<div class="search-form" style="display:none">
 			<?php $this->renderPartial( '_search', array(
 				'model' => $model,
@@ -41,9 +41,7 @@ $('.search-form form').submit(function(){
 		<!-- search-form -->
 	</div>
 
-	<br>
-
-	<div class="col-md-16 clearfix">
+	<div class="col-md-3 clearfix">
 		<?php echo CHtml::link( 'Add Client', array( 'client/create' ), array( 'class' => 'btn btn-success pull-right' ) ); ?>
 	</div>
 
@@ -51,7 +49,7 @@ $('.search-form form').submit(function(){
 
 <?php $this->widget( '\TbGridView', array(
 	'id'                    => 'user-grid',
-	'dataProvider'          => $model->search(),
+	'dataProvider'          => $model->searchUClient(),
 	'filter'                => null,//$model,
 	'type'         => TbHtml::GRID_TYPE_STRIPED . ' ' . TbHtml::GRID_TYPE_BORDERED . ' ' . TbHtml::GRID_TYPE_HOVER . ' ' . TbHtml::GRID_TYPE_CONDENSED,
 	'rowCssClassExpression' => '$data->color',
@@ -141,3 +139,4 @@ $('.search-form form').submit(function(){
 		),
 	),
 ) ); ?>
+</fieldset>

@@ -30,122 +30,96 @@ Yii::app()->bootstrap->register();
 <body>
 
 <?php
-/*$this->widget( 'bootstrap.widgets.TbNavbar', array(
+/*this->widget( 'bootstrap.widgets.TbNavbar', array(
 	'brandLabel' => CHtml::encode( Yii::app()->name ),
 	'display'    => null, // default is static to top
-	'items'      =>
-		array(
-			'class' => 'bootstrap.widgets.TbNav',
-			array(
-				array( 'label' => 'Home', 'url' => array( '/site/index' ) ),
-				array( 'label' => 'About', 'url' => array( '/site/page', 'view' => 'about' ) ),
-				array( 'label' => 'Contact', 'url' => array( '/site/contact' ) ),
-				array(
-					'label'   => 'Auth Assignment',
-					'url'     => array( '/authassignment/admin' ),
-					'visible' => ! Yii::app()->user->isGuest
-				),
-				array( 'label'   => 'Auth Items',
-				       'url'     => array( '/authitem/admin' ),
-				       'visible' => ! Yii::app()->user->isGuest
-				),
-				array(
-					'label'   => 'Auth Items Children',
-					'url'     => array( '/authitemchild/admin' ),
-					'visible' => ! Yii::app()->user->isGuest
-				),
-				array( 'label' => 'User', 'url' => array( '/user/admin' ), 'visible' => ! Yii::app()->user->isGuest ),
-				array( 'label' => 'Login', 'url' => array( '/site/login' ), 'visible' => Yii::app()->user->isGuest ),
-				array(
-					'label'   => 'Logout (' . Yii::app()->user->name . ')',
-					'url'     => array( '/site/logout' ),
-					'visible' => ! Yii::app()->user->isGuest
-				)
-			)
-		),
+	
 ) );*/
 if (!Yii::app()->user->isGuest) {
 	$this->widget( '\TbNavbar', array(
-		'brandLabel' => Yii::app()->name,
-		'color' => TbHtml::NAVBAR_COLOR_INVERSE,
-		'display'    => null, // default is static to top
-		'collapse' => true,
-		'items'      => array(
-			array(
+		'brandLabel'    => Yii::app()->name,
+		'color'         => TbHtml::NAVBAR_COLOR_INVERSE,
+		'display'       => null, // default is static to top
+		'collapse'      => true,
+		'items'         => array(
+            array(
 				'class' => '\TbNav',
 				'encodeLabel' => false,
 				'items' =>
 					array(
-						array( 'label' => 'Home', 'url' => array( '/' ) ),
+                        array( 'label' => 'Home', 'url' => array( '/' ) ),
+                        array( 'label' => 'Administration',
+                            'items' => array(
+                                array( 'label' => 'Manage Clients', 'url' => array( '/client/admin' ),'visible' => !Yii::app()->user->checkAccess('superadmin')),
+                                array( 'label' => 'Manage Users', 'url' => array( '/user/admin' ) ),
+                                array( 'label' => 'Grant Access', 'url' => array( '/user/assign' ) ),
+                                '<li class="divider"></li>',
+                                array( 'label' => 'Manage Case Types', 'url' => array( '/case/admin' ) ),
+                                array( 'label' => 'Manage Document List Templates', 'url' => array( '/document/admin' ) ),
+                            ),
+                            'visible' => Yii::app()->user->checkAccess('admin'), //TODO visible for admin only
+                        ),
 
-						array( 'label' => 'Administration',
-							'items' => array(
-								array( 'label' => 'Manage Clients', 'url' => array( '/client/admin' ) ),
-								array( 'label' => 'Manage Users', 'url' => array( '/user/admin' ) ),
-								array( 'label' => 'Grant Access', 'url' => array( '/user/assign' ) ),
-								'<li class="divider"></li>',
-								array( 'label' => 'Manage Case Types', 'url' => array( '/case/admin' ) ),
-								array( 'label' => 'Manage Document List Templates', 'url' => array( '/document/admin' ) ),
-							),
-							'visible' => Yii::app()->user->checkAccess('admin'), //TODO visible for admin only
+                        array( 'label'   => 'Clients',
+                               'url'     => array( '/client/admin' ),
+                               'visible' => !Yii::app()->user->checkAccess('admin')
+                        ),
 
-						),
+                        array( 'label'   => 'Calendar',
+                               'url'     => array( '/calendar/view' ),
+                               'visible' => !Yii::app()->user->checkAccess('superadmin') && Yii::app()->user->checkAccess('admin')
+                        ),
+                        array(
+                            'label' => "Issues and Actions <sup><span class='badge label-".( ($this->issues == 0 && $this->attorney_actions == 0)? '':'danger')."'>{$this->issues}/{$this->attorney_actions}</span></sup>",
+                            'items' => array(
+                                array(
+                                'label'       => "Outstanding Issues <sup><span class='badge label-" . ( $this->issues == 0 ? '' : 'danger' ) . "'>{$this->issues}</span></sup>",
+                                    'url'         => array( '/issues/admin' ),
+                                    'encodeLabel' => false,
+                                    'visible'     => Yii::app()->user->checkAccess('admin')
+                                ),
+                                array(
+                                'label'       => "Attorney Required Actions <sup><span class='badge label-" . ( $this->attorney_actions == 0 ? '' : 'danger' ) . "'>{$this->attorney_actions}</span></sup>",
+                                    'url'         => array( '/attorneyactions/admin' ),
+                                    'encodeLabel' => false,
+                                    'visible'     => Yii::app()->user->checkAccess('admin')
+                                )
+                            ),
+                        ),
 
-						array( 'label'   => 'Clients',
-						       'url'     => array( '/client/admin' ),
-						       'visible' => ! Yii::app()->user->isGuest
-						),
+                        /*array( 'label'   => 'QR codes',
+                               'url'     => array( '/qr/generator' ),
+                               'visible' => ! Yii::app()->user->isGuest
+                        ),*/
 
-						array( 'label'   => 'Calendar',
-						       'url'     => array( '/calendar/view' ),
-						       'visible' => Yii::app()->user->checkAccess('admin')
-						),
-						array(
-							'label' => "Issues and Actions ".
-							           "<sup><span class='badge label-".( ($this->issues == 0 && $this->attorney_actions == 0)? '':'danger')."'>{$this->issues}/{$this->attorney_actions}</span></sup>"
-						,
-							'items' => array(
-								array(
-									'label'       => "Outstanding Issues <sup><span class='badge label-" . ( $this->issues == 0 ? '' : 'danger' ) . "'>{$this->issues}</span></sup>",
-									'url'         => array( '/issues/admin' ),
-									'encodeLabel' => false,
-									'visible'     => Yii::app()->user->checkAccess( 'admin' )
-								),
-								array(
-									'label'       => "Attorney Required Actions <sup><span class='badge label-" . ( $this->attorney_actions == 0 ? '' : 'danger' ) . "'>{$this->attorney_actions}</span></sup>",
-									'url'         => array( '/attorneyactions/admin' ),
-									'encodeLabel' => false,
-									'visible'     => Yii::app()->user->checkAccess( 'admin' )
-								)
-							)
-						),
+                        array( 'label'   => 'Login',
+                               'url'     => array( '/site/login' ),
+                               'visible' => Yii::app()->user->isGuest
+                        ),
 
-						/*array( 'label'   => 'QR codes',
-						       'url'     => array( '/qr/generator' ),
-						       'visible' => ! Yii::app()->user->isGuest
-						),*/
-
-						array( 'label'   => 'Login',
-						       'url'     => array( '/site/login' ),
-						       'visible' => Yii::app()->user->isGuest
-						),
-
-						array(
-							'label'   => 'Logout (' . Yii::app()->user->name . ')',
-							'url'     => array( '/site/logout' ),
-							'visible' => ! Yii::app()->user->isGuest
-						)
-					),
-			),
-		),
-	) );
-
+                        array(
+                            'label'   => 'Logout (' . Yii::app()->user->name . ')',
+                            'url'     => array( '/site/logout' ),
+                            'visible' => ! Yii::app()->user->isGuest
+                        )
+                    ),
+                ),
+            ),
+        )
+    );
 }
 
 ?>
 <!--/.nav-collapse -->
 
 <div class="container">
+     <?php 
+        foreach(Yii::app()->user->getFlashes() as $key => $message) {?>
+            <div class="alert alert-<?php echo $key; ?> in alert-block fade">
+                <a href="#" class="close" data-dismiss="alert" type="button">x</a>
+                <?php echo $message; ?>
+            </div>
+    <?php }?>
 	<!-- Main component for a primary marketing message or call to action -->
 	<?php echo $content; ?>
 

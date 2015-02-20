@@ -10,8 +10,6 @@ $this->breadcrumbs = array(
 );
 ?>
 
-	<h1>Add Case Type</h1>
-
 <?php $this->renderPartial( '_form', array(
 	'model' => $model,
 	'steps' => $steps,

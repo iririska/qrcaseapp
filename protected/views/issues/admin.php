@@ -20,18 +20,19 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
+<fieldset>
+	<legend>Outstanding Issues</legend>
 
-<h1>Outstanding Issues</h1>
-
-	<div class="col-md-3 col-md-offset-9">
-		<?php echo CHtml::link('Add Issue', array('issues/create'), array( 'class' => 'btn btn-success pull-right' ) ); ?>
-	</div>
+    <div class="row">	
+        <div class="col-md-3 col-md-offset-9">
+            <?php echo CHtml::link('Add Issue', array('issues/create'), array( 'class' => 'btn btn-success pull-right' ) ); ?>
+        </div>
+    </div>
 <?php
 
-$this->widget('booster.widgets.TbExtendedGridView',
-	array(
+$this->widget('\TbGridView', array(
 	'id'           => 'user-grid',
-	'dataProvider' => $model->search(),
+	'dataProvider' => $model->searchUIssues(),
 	'filter'       => null,//$model,
 	'rowCssClassExpression' => '$data->status == 0 ? " danger" : ""',
 	'pagerCssClass' => 'list-pager',
@@ -61,14 +62,14 @@ $this->widget('booster.widgets.TbExtendedGridView',
 			'header' => 'Creator',
 			'type'   => 'raw',
 			'value'  => '$data->creator->email',
-		),
+		),*/
 		array(
 			'name'   => 'status',
 			'header' => 'Status',
 			'type'   => 'raw',
 			'value'  => '$data->status==1?"Active":"Disabled"',
 		),
-		array(
+		/*array(
 			'name'   => 'created',
 			'header' => 'Date Created',
 			'type'   => 'raw',
@@ -88,3 +89,5 @@ $this->widget('booster.widgets.TbExtendedGridView',
 		),
 	),
 ) );
+?>
+</fieldset>

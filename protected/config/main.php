@@ -24,7 +24,8 @@ return array(
 	),
 
 	// preloading 'log' component
-	'preload'=>array('log'),
+	//'preload'=>array('log'),
+    'preload'=>array('log', 'bootstrap'),
 
 	// autoloading model and component classes
 	'import'=>array(
@@ -73,10 +74,11 @@ return array(
 			'allowAutoLogin'=>true,
 			'class' => 'auth.components.AuthWebUser',
 			'admins' => array(
-				'admin',
+				'superadmin',
 				'zergusvcv@gmail.com',
 	            //'test@test.com',
 			),
+            'autoUpdateFlash' => false,
 		),
 
 		'authManager' => array(
@@ -87,7 +89,7 @@ return array(
 					'class' => 'auth.components.AuthBehavior',
 				),
 			),
-			'defaultRoles'=>array('user'),
+			'defaultRoles'=>array('guest'),
 		),
 		/*'bootstrap' => array(
 			'class' => 'bootstrap.components.TbApi',

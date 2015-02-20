@@ -7,7 +7,8 @@ $this->breadcrumbs=array(
 	'Create',
 );
 ?>
+<fieldset>
+	<legend>Add Issue</legend>
 
-<h1>Add Issue</h1>
-
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+    <?php $this->renderPartial('_form', array('model'=>$model)); ?>
+</fieldset>

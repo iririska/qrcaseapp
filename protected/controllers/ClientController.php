@@ -28,6 +28,10 @@ class ClientController extends Controller
 	public function accessRules()
 	{
 		return array(
+            array('deny', // admin permissions
+				'actions'=>array('create'),
+				'roles'=>array('superadmin'),
+			),
 			/*array('allow',  // allow all clients to perform 'index' and 'view' actions
 				'actions'=>array('index','view'),
 				'clients'=>array('*'),
@@ -288,7 +292,7 @@ class ClientController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Client('search');
+		$model=new Client('searchUClient');
 		$model->unsetAttributes();  // clear any default values
 		if (isset($_GET['Client'])) {
 			$model->attributes=$_GET['Client'];

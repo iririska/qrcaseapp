@@ -148,7 +148,7 @@ class WorkflowController extends Controller
 		/* @var User $me */
 		$me = User::model()->findByPk( Yii::app()->user->getId() );
 
-		$_clients_ids = $me->getAssignedClientsIDs();
+		$_clients_ids = array_keys(Client::getMyClients());
 
 		$dataProvider=new CActiveDataProvider( 'Workflow',
 			array(
@@ -179,29 +179,9 @@ class WorkflowController extends Controller
 	{
 		/* @var User $me */
 		$me = User::model()->findByPk( Yii::app()->user->getId() );
-
-		$_clients_ids = $me->getAssignedClientsIDs();
-
-		$dataProvider=new CActiveDataProvider( 'Workflow',
-			array(
-				'criteria'      => array(
-					'condition' => " client_id in ('". implode("', '", $_clients_ids) ."')",
-					//'order'     => 'create_time DESC',
-					//'with'      => array( 'author' ),
-				),
-				'countCriteria' => array(
-					'condition' => " client_id in ('". implode("', '", $_clients_ids) ."')",
-					// 'order' and 'with' clauses have no meaning for the count query
-				),
-				'pagination'    => array(
-					'pageSize' => 10,
-				),
-			)
-		);
-
-
-
-		$dataProvider=new CActiveDataProvider( 'Workflow',
+		$_clients_ids = array_keys(Client::getMyClients());
+        
+        $dataProvider=new CActiveDataProvider( 'Workflow',
 			array(
 				'criteria'      => array(
 					'condition' => " client_id in ('". implode("', '", $_clients_ids) ."')",
@@ -219,13 +199,13 @@ class WorkflowController extends Controller
 		);
 
 		// outstanding issues
-		$issues=new OutstandingIssues('search');
+		$issues=new OutstandingIssues('searchUIssues');
 		$issues->unsetAttributes();  // clear any default values
 		if(isset($_GET['OutstandingIssues']))
 			$issues->attributes=$_GET['OutstandingIssues'];
 
 		// attorney actions
-		$actions=new AttorneyActions('search');
+		$actions=new AttorneyActions('searchUAction');
 		$actions->unsetAttributes();  // clear any default values
 		if(isset($_GET['AttorneyActions']))
 			$actions->attributes=$_GET['AttorneyActions'];

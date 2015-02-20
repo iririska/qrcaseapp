@@ -13,7 +13,8 @@ $this->breadcrumbs=array(
 );
 
 ?>
+<fieldset>
+	<legend>Update WorkflowType <?php echo $model->id; ?></legend>
 
-    <h1>Update WorkflowType <?php echo $model->id; ?></h1>
-
-<?php $this->renderPartial('_form', array('model'=>$model, 'steps' => $steps)); ?>
+    <?php $this->renderPartial('_form', array('model'=>$model, 'steps' => $steps)); ?>
+</fieldset>

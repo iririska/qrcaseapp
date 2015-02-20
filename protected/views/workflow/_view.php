@@ -6,10 +6,11 @@
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title"><?php echo Chtml::link($data->client->fullname, array('client/view', 'id'=>$data->client->id)); ?></h2>
-		<?php
-		echo TbHtml::link('Go to the case', array('workflow/view', 'id'=>$data->id), array('class'=>'btn btn-success text-right'));
+        <?php 
+        echo TbHtml::link($data->client->fullname, array('client/view', 'id'=>$data->client->id),array('class'=>'btn btn-default pull-left'));
+		echo TbHtml::link('Go to the case', array('workflow/view', 'id'=>$data->id), array('class'=>'btn btn-success pull-right'));
 		?>
+        <div class="clearfix"></div>
 	</div>
 	<div class="panel-body">
 		<div class="row">

@@ -14,7 +14,8 @@ $this->breadcrumbs=array(
 	array('label'=>'Manage User', 'url'=>array('admin')),
 );*/
 ?>
+<fieldset>
+	<legend>Add User</legend>
 
-<h1>Add User</h1>
-
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+    <?php $this->renderPartial('_form', array('model'=>$model)); ?>
+</fieldset>

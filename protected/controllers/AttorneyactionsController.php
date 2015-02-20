@@ -126,7 +126,7 @@ class AttorneyactionsController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new AttorneyActions('search');
+		$model=new AttorneyActions('searchUAction');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['AttorneyActions']))
 			$model->attributes=$_GET['AttorneyActions'];

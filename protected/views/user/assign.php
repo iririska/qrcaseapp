@@ -12,39 +12,38 @@ $this->breadcrumbs = array(
 	'Assign Users to Clients',
 );
 
-Yii::app()->clientScript->registerCssFile( 'css/bootstrap.vertical-tabs.css' );
+Yii::app()->clientScript->registerCssFile( '/css/bootstrap.vertical-tabs.css' );
 ?>
-	<h1>Assign Users to Clients</h1>
+<fieldset>
+	<legend>Assign Users to Clients</legend>
 
 	<p class="help-block">
 		Select client tab, check users checkboxes and click `Assign` button
 	</p>
 
-<?php if(Yii::app()->user->hasFlash('assign')) { ?>
+    <?php /*if(Yii::app()->user->hasFlash('assign')) { ?>
 
-	<div class="alert alert-success alert-dismissible" role="alert">
-		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		<?php echo Yii::app()->user->getFlash('assign'); ?>
-	</div>
-	<script>
-		setTimeout(function(){
-			$('.alert').slideUp(function(){ $(this).remove()});
-		}, 3000);
-		clearTimeout();
-	</script>
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <?php echo Yii::app()->user->getFlash('assign'); ?>
+        </div>
+        <script>
+            setTimeout(function(){
+                $('.alert').slideUp(function(){ $(this).remove()});
+            }, 3000);
+            clearTimeout();
+        </script>
 
-<?php } ?>
+    <?php }*/ ?>
 
-<?php $form = $this->beginWidget( '\TbActiveForm', array(
-	'id'                   => 'user-form',
-	'layout'               => TbHtml::FORM_LAYOUT_HORIZONTAL,
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
-	'enableAjaxValidation' => false,
-) );
-?>
+    <?php
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id' => 'user-form',
+        'enableAjaxValidation'=>false,
+        'layout' => TbHtml::FORM_LAYOUT_HORIZONTAL,
+        'htmlOptions' => array(),
+    ));
+    ?>
 
 	<div class="row">
 		<div class="col-xs-3"> <!-- required for floating -->
@@ -94,19 +93,16 @@ Yii::app()->clientScript->registerCssFile( 'css/bootstrap.vertical-tabs.css' );
 
 	</div>
 	<hr>
-	<div class="col-md-5">
-		<?php
-		echo TbHtml::link('Reset', array('user/assign'), array('style'=>'margin-right: 5em;'));
-
-		echo TbHtml::submitButton( 'Assign', array(
-			'color' => TbHtml::BUTTON_COLOR_PRIMARY,
-			'size'  => TbHtml::BUTTON_SIZE_LARGE,
-		) );
-
-		?>
-	</div>
-
-<?php $this->endWidget(); ?>
+    <?php 
+    echo TbHtml::formActions(array(
+        TbHtml::submitButton('Assign', array('color' => TbHtml::BUTTON_COLOR_PRIMARY)),
+        TbHtml::link('Reset',
+            array('user/assign'),
+            array('class' => 'btn btn-default')
+        )
+    )); 
+    
+    $this->endWidget(); ?>
 
 <script>
 	$('.check_users').on('click', function(e){
@@ -122,3 +118,4 @@ Yii::app()->clientScript->registerCssFile( 'css/bootstrap.vertical-tabs.css' );
 		});
 	});
 </script>
+</fieldset>

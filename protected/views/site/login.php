@@ -9,44 +9,52 @@ $this->breadcrumbs = array(
 );
 ?>
 <div class="logo-container text-center">
-	<?php echo CHtml::image('images/logo.png', Yii::app()->name, array('title'=>Yii::app()->name));?>
+	<?php echo CHtml::image('/images/logo.png', Yii::app()->name, array('title'=>Yii::app()->name));?>
 </div>
 
 <div class="col-md-offset-4 col-md-4">
-	<?php $form = $this->beginWidget( 'CActiveForm', array(
-		'id'                     => 'login-form',
-		'enableClientValidation' => true,
-		'clientOptions'          => array(
-			'validateOnSubmit' => true,
-		),
-		'htmlOptions'            => array(
-			'class' => "form-horizontal",
-			'role'  => "form"
-		)
-	) ); ?>
+   <?php 
+   foreach(Yii::app()->user->getFlashes() as $key => $message) {?>
+        <div class="alert alert-<?php echo $key; ?> in alert-block fade">
+            <a href="#" class="close" data-dismiss="alert" type="button">x</a>
+            <?php echo $message; ?>
+        </div>
+    <?php 
+   } 
 
-	<div class="form-group">
-		<?php echo $form->labelEx( $model, 'username' ); ?>
-		<?php echo $form->textField( $model, 'username', array( 'class' => "form-control" ) ); ?>
-		<?php echo $form->error( $model, 'username' ); ?>
-	</div>
 
-	<div class="form-group">
-		<?php echo $form->labelEx( $model, 'password' ); ?>
-		<?php echo $form->passwordField( $model, 'password', array( 'class' => "form-control" ) ); ?>
-		<?php echo $form->error( $model, 'password' ); ?>
-	</div>
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id' => 'login-form',
+        'enableAjaxValidation'=>true,
+        'enableClientValidation'=>true,
+        'clientOptions' => array(
+            'validateOnSubmit'=>true,
+            /*'validateOnChange'=>true,
+            'validateOnType'=>true,*/  
+        ),
+        'layout' => TbHtml::FORM_LAYOUT_VERTICAL,
+        'htmlOptions' => array(),
+    ));
+    ?>
 
-	<div class="form-group rememberMe">
-		<?php echo $form->checkBox( $model, 'rememberMe' ); ?>
-		<?php echo $form->label( $model, 'rememberMe' ); ?>
-		<?php echo $form->error( $model, 'rememberMe' ); ?>
-	</div>
+    <fieldset>
+        <?php
+        echo $form->textFieldControlGroup($model, 'username');
+        echo $form->passwordFieldControlGroup($model, 'password');
+        echo $form->checkBoxControlGroup($model, 'rememberMe');
+        ?>
+    </fieldset>
 
-	<div class="row">
-	<?php echo CHtml::submitButton( 'Login', array( 'class' => 'btn btn-primary' ) ); ?>
-	</div>
-
+	<?php 
+    echo TbHtml::formActions(array(
+        TbHtml::submitButton('Login', array('class' => 'btn btn-success')),
+        TbHtml::link('Sing up',
+            array('site/register'),
+            array('class' => 'pull-right btn btn-default')
+        )
+    )); 
+    ?>
+    
 	<?php $this->endWidget(); ?>
-	<!-- form -->
+
 </div>

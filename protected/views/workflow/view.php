@@ -302,7 +302,7 @@ content;
 
 	<div id="timeline-container">
 		<div id="timesheet" style="width: 100%; margin-bottom: 20px;"></div>
-		<div id="timeline-loader"><span class="helper"></span><?php echo CHtml::image('images/loader.gif');?></div>
+		<div id="timeline-loader"><span class="helper"></span><?php echo CHtml::image('/images/loader.gif');?></div>
 	</div>
  */ ?>
 

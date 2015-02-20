@@ -13,9 +13,10 @@ $this->breadcrumbs=array(
 
 <?php if(Yii::app()->user->hasFlash('contact')): ?>
 
-<div class="flash-success">
-	<?php echo Yii::app()->user->getFlash('contact'); ?>
-</div>
+    <div class="alert alert-success in alert-block fade">
+        <a href="#" class="close" data-dismiss="alert" type="button">x</a>
+        <?php echo Yii::app()->user->getFlash('contact'); ?>
+    </div>
 
 <?php else: ?>
 
@@ -25,58 +26,44 @@ If you have business inquiries or other questions, please fill out the following
 
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'contact-form',
-	'enableClientValidation'=>true,
-	'clientOptions'=>array(
-		'validateOnSubmit'=>true,
-	),
-)); ?>
+    <?php 
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id' => 'contact-form',
+        'enableAjaxValidation'=>true,
+        'enableClientValidation'=>true,
+        'clientOptions' => array(
+            'validateOnSubmit'=>true,
+        ),
+        'layout' => TbHtml::FORM_LAYOUT_HORIZONTAL,
+        'htmlOptions' => array(),
+    ));
+    ?>
+    <fieldset>
+        <p class="help-block">Fields with <span class="required">*</span> are required.</p>
+        <?php 
+        echo $form->textFieldControlGroup($model, 'name', array( 'span' => 5 ));
+        echo $form->textFieldControlGroup($model, 'email', array( 'span' => 5 ));
+        echo $form->textFieldControlGroup($model, 'subject', array( 'span' => 8, 'maxlength'=>128 ));
+        echo $form->textAreaControlGroup($model, 'body', array( 'span' => 8, 'rows'=>5 ));
+        
+        if(CCaptcha::checkRequirements()): ?>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-5">
+                    <?php $this->widget('CCaptcha');?>
+                </div>
+            </div>
+            <?php echo $form->textFieldControlGroup($model,'verifyCode', 
+                array( 'span' => 5, 'help' => 'Please enter the letters as they are shown in the image above.<br/>Letters are not case-sensitive.' )
+            );?>
+        <?php endif; ?>
+    </fieldset>
+    <?php 
+    echo TbHtml::formActions(array(
+        TbHtml::submitButton('Submit', array('color' => TbHtml::BUTTON_COLOR_PRIMARY)),
+        TbHtml::resetButton('Reset'),
+    )); 
+    ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
-	<?php echo $form->errorSummary($model); ?>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'name'); ?>
-		<?php echo $form->textField($model,'name'); ?>
-		<?php echo $form->error($model,'name'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'email'); ?>
-		<?php echo $form->textField($model,'email'); ?>
-		<?php echo $form->error($model,'email'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'subject'); ?>
-		<?php echo $form->textField($model,'subject',array('size'=>60,'maxlength'=>128)); ?>
-		<?php echo $form->error($model,'subject'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'body'); ?>
-		<?php echo $form->textArea($model,'body',array('rows'=>6, 'cols'=>50)); ?>
-		<?php echo $form->error($model,'body'); ?>
-	</div>
-
-	<?php if(CCaptcha::checkRequirements()): ?>
-	<div class="row">
-		<?php echo $form->labelEx($model,'verifyCode'); ?>
-		<div>
-		<?php $this->widget('CCaptcha'); ?>
-		<?php echo $form->textField($model,'verifyCode'); ?>
-		</div>
-		<div class="hint">Please enter the letters as they are shown in the image above.
-		<br/>Letters are not case-sensitive.</div>
-		<?php echo $form->error($model,'verifyCode'); ?>
-	</div>
-	<?php endif; ?>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Submit'); ?>
-	</div>
 
 <?php $this->endWidget(); ?>
 

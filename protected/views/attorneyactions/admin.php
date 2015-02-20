@@ -8,13 +8,13 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<h1>Manage Attorney Actions</h1>
+<fieldset>
+	<legend>Manage Attorney Actions</legend>
 
 <?php
-$this->widget( '\TbGridView',
-	array(
+    $this->widget( '\TbGridView', array(
 		'id'                    => 'user-grid',
-		'dataProvider'          => $model->search(),
+		'dataProvider'          => $model->searchUAction(),
 		'filter'                => null,//$model,
 		'rowCssClassExpression' => '$data->status == 0 ? " danger" : ""',
 		'pagerCssClass'         => 'list-pager',
@@ -31,7 +31,7 @@ $this->widget( '\TbGridView',
 				'type'   => 'raw',
 				'value'  => 'CHtml::link("{$data->client->firstname} {$data->client->lastname} {$data->client->email}", array("workflow/view", "id"=>$data->client->current_workflow->id, "c"=>$data->client->id))',
 			),
-			/*array(
+			array(
 				'name'   => 'author',
 				'header' => 'Creator',
 				'type'   => 'raw',
@@ -43,7 +43,7 @@ $this->widget( '\TbGridView',
 				'type'   => 'raw',
 				'value'  => '$data->status==1?"Active":"Disabled"',
 			),
-			array(
+			/*array(
 				'name'   => 'created',
 				'header' => 'Date Created',
 				'type'   => 'raw',
@@ -59,9 +59,10 @@ $this->widget( '\TbGridView',
 			array(
 				'header'   => '',
 				'class'    => 'bootstrap.widgets.TbButtonColumn',
-				'template' => '{update} {delete}',
+				'template' => '{delete}',
 				//'class'=>'bootstrap.widgets.btnDropdown',
 			),
 		),
-	)
-);
+	));
+    ?>
+</fieldset>

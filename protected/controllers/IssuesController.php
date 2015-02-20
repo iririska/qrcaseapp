@@ -122,11 +122,10 @@ class IssuesController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new OutstandingIssues('search');
+        $model=new OutstandingIssues('searchUIssues');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['OutstandingIssues']))
 			$model->attributes=$_GET['OutstandingIssues'];
-
 		$this->render('admin',array(
 			'model'=>$model,
 		));

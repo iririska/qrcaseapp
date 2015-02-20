@@ -17,12 +17,15 @@ class UserIdentity extends CUserIdentity
 			$this->errorCode=self::ERROR_USERNAME_INVALID;
 		else if(!$user->validatePassword($this->password))
 			$this->errorCode=self::ERROR_PASSWORD_INVALID;
+        else if($user->status == User::STATUS_NEW) {
+            $this->errorCode = User::ERR_INACTIVE;
+        }
 		else
 		{
 			$this->_id=$user->id;
 			$this->username=$user->email;
 			$this->errorCode=self::ERROR_NONE;
-			Yii::app()->user->setState('__isAdmin', $user->role == 'admin');
+			Yii::app()->user->setState('__isAdmin', in_array($user->role,array('superadmin')));
 		}
 
 		return $this->errorCode==self::ERROR_NONE;

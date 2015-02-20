@@ -21,15 +21,15 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-
-<h1>Manage Case Types</h1>
-	<div class="col-md-9">
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
+<fieldset>
+	<legend>Manage Case Types</legend>
+	<div class="col-md-9" style="margin-bottom: 15px;">
+        <?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn btn-default')); ?>
+        <div class="search-form" style="display:none">
+        <?php $this->renderPartial('_search',array(
+            'model'=>$model,
+        )); ?>
+        </div><!-- search-form -->
 	</div>
 	<div class="col-md-3">
 		<?php echo CHtml::link( 'Add Case Type', array( 'case/create' ), array( 'class' => 'btn btn-success pull-right' ) ); ?>
@@ -60,7 +60,7 @@ $('.search-form form').submit(function(){
 			'name'    => 'modified',
 			'header'  => 'Updated',
 			'type'    => 'raw',
-			'value'   => '(empty($data->updated)?"-":date(Yii::app()->params["fullDateFormat"], strtotime($data->modified)))',
+			'value'   => '(empty($data->modified)?"-":date(Yii::app()->params["fullDateFormat"], strtotime($data->modified)))',
 			'visible' => true,
 		),
 		array(
@@ -69,3 +69,4 @@ $('.search-form form').submit(function(){
 		),
 	),
 )); ?>
+</fieldset>

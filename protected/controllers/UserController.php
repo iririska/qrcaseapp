@@ -29,7 +29,7 @@ class UserController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', // admin permissions
+            array('allow', // admin permissions
 				'actions'=>array('create', 'update', 'admin', 'view', 'delete', 'updatepassword', 'assign'),
 				'roles'=>array('admin'),
 			),
@@ -63,17 +63,14 @@ class UserController extends Controller
 	public function actionCreate()
 	{
 		$model=new User;
-
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
 		if (isset($_POST['User'])) {
 			$model->attributes=$_POST['User'];
 			if ($model->save()) {
 				$this->redirect(array('admin'));
 			}
 		}
-
 		$this->render('create',array(
 			'model'=>$model,
 		));
@@ -87,7 +84,6 @@ class UserController extends Controller
 	public function actionUpdate($id)
 	{
 		// return Yii::app()->user->id==$data->id || Yii::app()->user->role == 'admin';
-
 
 		$model=$this->loadModel($id);
 
@@ -151,8 +147,9 @@ class UserController extends Controller
 	}
 
 	public function actionAssign(){
-		$clients = CHtml::listData( Client::model()->findAll(), 'id' , 'fullname' );
-		$users = CHtml::listData( User::model()->findAll("role<>'admin'"), 'id' , 'email' );
+		$clients = Client::getMyClients();
+		$users = CHtml::listData( User::model()->findByPk(Yii::app()->user->id)->attorney_paralegal, 'id' , 'email' );
+        $users += CHtml::listData( User::model()->findByPk(Yii::app()->user->id)->paralegal, 'id' , 'email' );
 		$assignments = self::getAssignmentsArray();
 
 		if (isset($_POST['ClientUser'])) {
@@ -168,8 +165,8 @@ class UserController extends Controller
 
 				}
 			}
-			Yii::app()->user->setFlash('assign', "User-client assignments were successfully updated");
-			$this->redirect( array('assign'));
+            Controller::addAlert('assign','User-client assignments were successfully updated.');
+			$this->redirect('/user/assign');
 		}
 
 		$this->render('assign',array(
@@ -196,14 +193,16 @@ class UserController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new User('search');
+        $model=new User('searchAccountUsers');
 		$model->unsetAttributes();  // clear any default values
 		if (isset($_GET['User'])) {
 			$model->attributes=$_GET['User'];
-		}
-
+        }
+        $dataProvider = $model->searchAccountUsers();
+        
 		$this->render('admin',array(
 			'model'=>$model,
+            'dataProvider'=>$dataProvider
 		));
 	}
 

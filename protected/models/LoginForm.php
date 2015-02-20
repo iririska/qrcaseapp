@@ -23,6 +23,8 @@ class LoginForm extends CFormModel
 		return array(
 			// username and password are required
 			array('username, password', 'required'),
+            array('username', 'email'),
+            array('username', 'existAndActivated'),
 			// rememberMe needs to be a boolean
 			array('rememberMe', 'boolean'),
 			// password needs to be authenticated
@@ -39,6 +41,20 @@ class LoginForm extends CFormModel
 			'rememberMe'=>'Remember me next time',
 		);
 	}
+    
+    public function existAndActivated($attribute,$params) {
+        if(!$this->hasErrors() && $this->$attribute && $this->password)
+        {
+            $user = User::model()->findByAttributes(array('email'=>$this->$attribute));
+            if ($user)
+            {
+                if($user->status == 0)
+                    $this->addError($attribute,'Before you get access, please activate account.');
+            }
+            else
+                $this->addError($attribute,'User with this email does not exist.');
+        }
+    }
 
 	/**
 	 * Authenticates the password.

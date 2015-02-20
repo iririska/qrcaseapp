@@ -20,17 +20,17 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
+<fieldset>
+	<legend>Documents List templates</legend>
+    <div class="row">
+        <div class="col-md-3 col-md-offset-9">
+            <?php echo CHtml::link('Add Documents List', array('document/create'), array( 'class' => 'btn btn-success pull-right' ) ); ?>
+        </div>
+    </div>
 
-<h1>Documents List templates</h1>
-
-<div class="col-md-3 col-md-offset-9">
-	<?php echo CHtml::link('Add Documents List', array('document/create'), array( 'class' => 'btn btn-success pull-right' ) ); ?>
-</div>
-<br>
 
 <?php
-$this->widget('booster.widgets.TbExtendedGridView',
-	array(
+$this->widget('\TbGridView', array(
 	'id'            => 'documentlist-grid',
 	'type'          => 'striped bordered',
 	'dataProvider'  => $model->search(),
@@ -72,21 +72,5 @@ $this->widget('booster.widgets.TbExtendedGridView',
 		),
 	),
 ) );
-/*$this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'outstanding-issues-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
-	'columns'=>array(
-		'id',
-		'text',
-		'author',
-		'status',
-		'created',
-		'updated',
-		array(
-			'class'=>'CButtonColumn',
-		),
-	),
-));*/
-
 ?>
+</fieldset>

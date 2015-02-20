@@ -44,7 +44,7 @@ class OutstandingIssues extends CActiveRecord
 			array('author, status', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, text, author, status, created, updated', 'safe', 'on'=>'search'),
+			array('id, text, author, status, created, updated', 'safe', 'on'=>'search, search2'),
 		);
 	}
 
@@ -76,31 +76,36 @@ class OutstandingIssues extends CActiveRecord
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
+	public function searchUIssues()
+	{
+		$criteria=new CDbCriteria;
+    	$criteria->compare('id',$this->id);
+		$criteria->compare('text',$this->text,true);
+		$criteria->compare('author',$this->author);
+		$criteria->compare('status',$this->status);
+		$criteria->compare('created',$this->created,true);
+		$criteria->compare('updated',$this->updated,true);
+        if($is = User::model()->findByPk(Yii::app()->user->id)->allIssues){
+            $issues = implode(',', array_keys(CHtml::listData($is,'id','author')));
+            if(!empty($issues)) 
+                $criteria->addcondition("id IN(".$issues.")");
+        }else
+            $criteria->compare('id',0);
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function search()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
-
 		$criteria=new CDbCriteria;
-
 		$criteria->compare('id',$this->id);
 		$criteria->compare('text',$this->text,true);
 		$criteria->compare('author',$this->author);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('created',$this->created,true);
 		$criteria->compare('updated',$this->updated,true);
-
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

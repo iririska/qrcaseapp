@@ -16,15 +16,6 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
 
         <?php
 
-        /*$form = $this->beginWidget('\TbActiveForm', array(
-            'id' => 'client-form',
-            'layout' => TbHtml::FORM_LAYOUT_HORIZONTAL,
-            // Please note: When you enable ajax validation, make sure the corresponding
-            // controller action is handling ajax validation correctly.
-            // There is a call to performAjaxValidation() commented in generated controller code.
-            // See class documentation of CActiveForm for details on this.
-            'enableAjaxValidation' => false,
-        )); */
         $form = $this->beginWidget( 'booster.widgets.TbActiveForm', array(
             'id'                   => 'client-form',
             'type' => 'horizontal',
@@ -191,17 +182,15 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
             </div>
         </div>
 
-        <div class="form-actions">
-            <?php
-            echo TbHtml::link('Cancel', array('client/admin'), array('style' => 'margin-right: 5em;'));
-
-            echo TbHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array(
-                'color' => TbHtml::BUTTON_COLOR_PRIMARY,
-                'size' => TbHtml::BUTTON_SIZE_LARGE,
-            )); ?>
-        </div>
-
-        <?php $this->endWidget(); ?>
+        <?php
+        echo TbHtml::formActions(array(
+            TbHtml::link( 'Cancel', array( 'client/admin' ), array( 'class' => 'btn btn-default' ) ),
+            TbHtml::submitButton( $model->isNewRecord ? 'Create' : 'Save', array(
+                'class' => 'btn btn-primary'
+            ))
+        )); 
+        
+        $this->endWidget(); ?>
 
     </div><!-- form -->
 <?php

@@ -61,7 +61,7 @@ class AttorneyActions extends CActiveRecord
 			array('client_id, workflow_id, step_id, author, status', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, client_id, workflow_id, step_id, author, status, created, updated', 'safe', 'on'=>'search'),
+			array('id, client_id, workflow_id, step_id, author, status, created, updated', 'safe', 'on'=>'search, searchUAction'),
 		);
 	}
 
@@ -123,6 +123,28 @@ class AttorneyActions extends CActiveRecord
 		$criteria->compare('created',$this->created,true);
 		$criteria->compare('updated',$this->updated,true);
 
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function searchUAction()
+	{
+		$criteria=new CDbCriteria;
+    	$criteria->compare('id',$this->id);
+		$criteria->compare('client_id',$this->client_id);
+		$criteria->compare('workflow_id',$this->workflow_id);
+		$criteria->compare('step_id',$this->step_id);
+		$criteria->compare('author',$this->author);
+		$criteria->compare('status',$this->status);
+		$criteria->compare('created',$this->created,true);
+		$criteria->compare('updated',$this->updated,true);
+        if($allAction = User::model()->findByPk(Yii::app()->user->id)->allAction){
+            $action = implode(',', array_keys(CHtml::listData($allAction,'id','author')));
+            if(!empty($action)) 
+                $criteria->addcondition("id IN(".$action.")");
+        }else
+            $criteria->compare('id',0);
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

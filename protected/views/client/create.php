@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 	'Create',
 );
 ?>
-
-<h1>Add Client</h1>
-
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<fieldset>
+	<legend>Add Client</legend>
+    <?php $this->renderPartial('_form', array('model'=>$model)); ?>
+</fieldset>

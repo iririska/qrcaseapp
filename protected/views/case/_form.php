@@ -9,17 +9,20 @@
 
 <div class="form">
 
-	<?php $form = $this->beginWidget( '\TbActiveForm', array(
-		'id'                   => 'case-type-form',
-		'layout'               => TbHtml::FORM_LAYOUT_HORIZONTAL,
-		// Please note: When you enable ajax validation, make sure the corresponding
-		// controller action is handling ajax validation correctly.
-		// There is a call to performAjaxValidation() commented in generated controller code.
-		// See class documentation of CActiveForm for details on this.
-		'enableAjaxValidation' => false,
-	) ); ?>
-
-	<?php echo $form->errorSummary( $model ); ?>
+	<?php 
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id' => 'case-type-form',
+        'enableAjaxValidation'=>true,
+        'enableClientValidation'=>true,
+        'clientOptions' => array(
+            'validateOnSubmit'=>true,
+            /*'validateOnChange'=>true,
+            'validateOnType'=>true,*/  
+        ),
+        'layout' => TbHtml::FORM_LAYOUT_HORIZONTAL,
+        'htmlOptions' => array(),
+    ));
+    ?>
 
 	<fieldset>
 		<legend>Case Type</legend>
@@ -93,18 +96,15 @@
 		</div>
 	</fieldset>
 
-	<div class="form-actions">
+	<?php 
+    echo TbHtml::formActions(array(
+        TbHtml::link( 'Cancel', array( 'case/admin' ), array( 'class' => 'btn btn-default' ) ),
+        TbHtml::submitButton( $model->isNewRecord ? 'Create' : 'Save', array(
+			'class' => 'btn btn-primary'
+		))
+    )); 
 
-		<?php
-		echo TbHtml::link( 'Cancel', array( 'case/admin' ), array( 'style' => 'margin-right: 5em;' ) );
-
-		echo TbHtml::submitButton( $model->isNewRecord ? 'Create' : 'Save', array(
-			'color' => TbHtml::BUTTON_COLOR_PRIMARY,
-			'size'  => TbHtml::BUTTON_SIZE_LARGE,
-		) ); ?>
-	</div>
-
-	<?php $this->endWidget(); ?>
+    $this->endWidget(); ?>
 
 </div><!-- form -->
 

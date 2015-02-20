@@ -11,6 +11,7 @@
  * @property string $created
  * @property string $updated
  * @property string $last_logged
+ * @property string $hash
  * @property integer $status
  * @property string $firstname
  * @property string $lastname
@@ -18,6 +19,7 @@
  * @property string $phone2
  * @property string $address
  * @property integer $case_type
+ * @property integer $parent_id
  *
  * The followings are the available model relations:
  * @property Step[] $steps
@@ -25,7 +27,32 @@
  */
 class User extends CActiveRecord
 {
-	/**
+    // user status
+    const STATUS_NEW = 0;
+    const STATUS_ACTIVE = 1;
+    
+    // Set custom error
+    const ERR_INACTIVE = 'INACTIVE';
+    
+    // user role
+    const SUPER_ADMIN = 'superadmin';
+    const ADMIN = 'admin';
+    const USER = 'user';
+    
+    const ATTORNEY = 'Attorney';
+    const PARALEGAL = 'Paralegal';
+    const ACCOUNT = 'Account';
+
+    // Array lists keys with values
+    public static $userRole = array(
+        self::SUPER_ADMIN,
+        self::ADMIN,
+        self::USER,
+    );
+    
+    public $repeatPassword;
+
+    /**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
@@ -51,23 +78,22 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('email,password,role', 'required'),
+            array('repeatPassword', 'compare', 'compareAttribute' => 'password', 'message' => 'Passwords do not match', 'on' => 'register, updatePassword'),
+			array('email, password, role, parent_id', 'required'),
 			array('password', 'safe', 'on'=>'update'),
-			array('status', 'numerical', 'integerOnly'=>true),
-
-			array('password', 'length', 'min'=>4),
-
+            array('password', 'length', 'min'=>4),
+            array('password, repeatPassword', 'required', 'on' => 'register, updatepassword'),
+			array('status, parent_id', 'numerical', 'integerOnly'=>true),
+			array('role', 'in', 'range' => self::$userRole),
+            array('role', 'length', 'max'=>64),
 			array('email', 'length', 'max'=>128),
 			array('email', 'unique'),
 			array('email', 'email'),
-
 			array('email, role', 'safe', 'on'=>'updatepassword'),
-
 			array('password, address', 'length', 'max'=>255),
 			//array('role, firstname, lastname, phone, phone2', 'length', 'max'=>45),
 			array('created, updated, last_logged', 'safe'),
-
-			array('id, email, role, created, updated, last_logged, status', 'safe', 'on'=>'search'),
+			array('id, email, role, created, updated, last_logged, status, parent_id', 'safe', 'on'=>'search, searchAccountUsers'),
 		);
 	}
 
@@ -79,14 +105,22 @@ class User extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'client_user' =>  array(self::HAS_MANY, 'ClientUser', 'user_id'),
+            'paralegal' =>  array(self::HAS_MANY, 'User', 'parent_id', 'condition' => 'role=\''.self::USER.'\''),
+            'attorney' =>  array(self::HAS_MANY, 'User', 'parent_id', 'condition' => '`attorney`.`role`=\''.self::ADMIN.'\''),
+            'attorney_paralegal' => array(self::HAS_MANY, 'User', array('id' => 'parent_id'), 'through' => 'attorney', 'condition' => '`attorney_paralegal`.`role`=\''.self::USER.'\''),
+            'clients' => array(self::HAS_MANY, 'Client','creator_id'),
+            'client_attorney' => array(self::HAS_MANY, 'Client', array('id' => 'creator_id'), 'through' => 'attorney'),
+            'client_attorney_paralegal' => array(self::HAS_MANY, 'Client', array('id' => 'creator_id'), 'through' => 'attorney_paralegal'),
+            'client_user' =>  array(self::HAS_MANY, 'ClientUser', 'user_id'),
 			'assigned_clients'=>array(self::HAS_MANY, 'Client', array('client_id'=>'id'), 'through'=>'client_user'),
 			'steps' => array(self::HAS_MANY, 'Step', 'user_id'),
 			'workflows' => array(self::HAS_MANY, 'Workflow', 'client_id'),
+            'issues' => array(self::HAS_MANY, 'OutstandingIssues','author'), 
+            'issues_attorney' => array(self::HAS_MANY, 'OutstandingIssues', array('id'=>'author'), 'through' => 'attorney'),
 		);
 	}
-
-	/**
+    
+    /**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -105,6 +139,7 @@ class User extends CActiveRecord
 			'phone' => 'Phone',
 			'phone2' => 'Phone2',
 			'address' => 'Address',
+            'parent_id' => 'Parent',
 		);
 	}
 
@@ -139,12 +174,44 @@ class User extends CActiveRecord
 		$criteria->compare('phone',$this->phone,true);
 		$criteria->compare('phone2',$this->phone2,true);
 		$criteria->compare('address',$this->address,true);
-
+        $criteria->compare('parent_id',$this->parent_id,true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
-
+    
+    public function searchAccountUsers()
+	{
+		$criteria=new CDbCriteria;
+		$criteria->compare('id',$this->id);
+		$criteria->compare('email',$this->email,true);
+		$criteria->compare('role',$this->role,true);
+		$criteria->compare('status',$this->status);
+		$criteria->compare('firstname',$this->firstname,true);
+		$criteria->compare('lastname',$this->lastname,true);
+		$criteria->compare('phone',$this->phone,true);
+		$criteria->compare('phone2',$this->phone2,true);
+		$criteria->compare('address',$this->address,true);
+        $criteria->compare('parent_id',$this->parent_id,true);
+        $ids = $this->manageUsersIds;
+        if(!empty($ids)) 
+            $criteria->addcondition("id IN(".$ids.")");
+        else
+            $criteria->compare('id',0);
+        
+        return new CActiveDataProvider( $this,
+            array(
+                'criteria'      => $criteria,
+                'countCriteria' => $criteria,
+                'pagination'    => array(
+                    'pageSize' => 10,
+                ),
+            )
+        );
+	}
+    
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -165,14 +232,61 @@ class User extends CActiveRecord
 	{
 		return CPasswordHelper::hashPassword($password);
 	}
+    
+    protected function beforeValidate()
+    {
+        if ($this->isNewRecord)
+        {
+            if($this->scenario == 'register')
+            {
+                $this->role = self::SUPER_ADMIN;
+                $this->parent_id = 0;
+                $this->status = 0;
+            }
+            else
+            {
+                $this->parent_id = Yii::app()->user->id;
+            }
+        }
+        return parent::beforeValidate();
+    }
 
-	public function beforeSave(){
-		$this->password = CPasswordHelper::hashPassword($this->password);
-		if ($this->isNewRecord) $this->created = date('Y-m-d H:i:s');
-		return true;
+    protected function beforeSave()
+    {
+        if ($this->isNewRecord && !empty($this->password))
+                $this->password = $this->hashPassword($this->password);
+
+		if ($this->isNewRecord)
+        {
+            $this->created = date('Y-m-d H:i:s');
+            if($this->scenario == 'register')
+            {
+                $this->hash = sha1($this->email.$this->created);
+            }
+            
+            if(!Yii::app()->user->isGuest && !Yii::app()->user->isAdmin && $this->role != self::USER){
+                $this->role = self::USER;
+            }
+        } 
+		return parent::beforeSave();
 	}
+    
+    protected function afterSave()
+    {
+        if ($this->isNewRecord)
+        {
+            $role = new AuthAssignment();
+            $role->itemname = $this->role;
+            $role->userid   = $this->id;
+            if (!$role->save()) 
+            {
+                return false;
+            }
+        }
+        return parent::afterSave();
+    }
 
-	public function getAssignedClientsIDs(){
+    public function getAssignedClientsIDs(){
 		$_clients_ids = array();
 
 		//if not admin then select assigned Client only
@@ -189,4 +303,51 @@ class User extends CActiveRecord
 
 		return $_clients_ids;
 	}
+    
+    public function getAllIssues($status = 'all'){
+        $st_condition = '';
+        if($status != 'all')
+            $st_condition = ' AND status = '.$status;
+        $issues = null;
+ 		$_clients_ids = implode("', '", array_keys(Client::getMyClients()));
+        if(!empty($_clients_ids))
+            $issues = OutstandingIssues::model()->findAll('client_id IN(\''.$_clients_ids.'\')'.$st_condition);
+        return $issues;
+    }
+    
+    public function getAllAction($status = 'all'){
+        $st_condition = '';
+        if($status != 'all')
+            $st_condition = ' AND status = '.$status;
+        $issues = null;
+ 		$_clients_ids = implode("', '", array_keys(Client::getMyClients()));
+        if(!empty($_clients_ids))
+            $issues = AttorneyActions::model()->findAll('client_id IN(\''.$_clients_ids.'\')'.$st_condition);
+        return $issues;
+    }
+    
+    public function getManageUsersIds()
+    {
+        $manage = array();
+        $user = User::model()->findByPk(Yii::app()->user->id);
+        $manage += CHtml::listData($user->paralegal, 'id', 'parent_id');
+        $manage += CHtml::listData($user->attorney, 'id', 'parent_id');
+        $manage += CHtml::listData($user->attorney_paralegal, 'id', 'parent_id');
+        $ids = implode(',', array_keys($manage));
+        return $ids;
+    }
+    
+    public function  getParent(){
+        if(!$this->parent_id)
+            return false;
+        $user = User::model()->findByPk($this->parent_id);
+        return $user;
+    }
+    
+    public static function sendMail($to, $subject, $message, $from = 'admin@admin.com'){
+        $headers = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+        $headers .= "From:" . $from;
+        mail($to, $subject, $message, $headers);
+    }
 }

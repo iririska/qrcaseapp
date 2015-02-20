@@ -21,18 +21,11 @@ $('.search-form form').submit(function(){
 });
 " );
 ?>
+<fieldset>
+	<legend>Manage Users</legend>
 
-	<h1>Manage Users</h1>
-
-	<div class="col-md-9">
-		<?php /*
-		<p>
-			You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>
-				&lt;&gt;</b>
-			or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-		</p> */ ?>
-
-		<?php echo CHtml::link( 'Filter users', '#', array( 'class' => 'search-button btn' ) ); ?>
+	<div class="col-md-9" style="margin-bottom: 15px;">
+		<?php echo CHtml::link( 'Filter users', '#', array( 'class' => 'search-button btn btn-default' ) ); ?>
 		<div class="search-form" style="display:none">
 			<?php $this->renderPartial( '_search', array(
 				'model' => $model,
@@ -40,13 +33,14 @@ $('.search-form form').submit(function(){
 		</div>
 		<!-- search-form -->
 	</div>
+    
 	<div class="col-md-3">
 		<?php echo CHtml::link('Add User', array('user/create'), array( 'class' => 'btn btn-success pull-right' ) ); ?>
 	</div>
 
 <?php $this->widget( '\TbGridView', array(
 	'id'           => 'user-grid',
-	'dataProvider' => $model->search(),
+	'dataProvider' => $dataProvider,
 	'filter'       => null,//$model,
 	'type'         => TbHtml::GRID_TYPE_STRIPED . ' ' . TbHtml::GRID_TYPE_BORDERED . ' ' . TbHtml::GRID_TYPE_HOVER . ' ' . TbHtml::GRID_TYPE_CONDENSED,
 	'columns'      => array(
@@ -56,7 +50,7 @@ $('.search-form form').submit(function(){
 			'name'   => 'role',
 			'header' => 'User Type',
 			'type'   => 'raw',
-			'value'  => 'CHtml::encode($data->role=="admin"?"Attorney":"Paralegal")',
+			'value'  => 'CHtml::encode(AuthItem::model()->userRole[$data->role])',
 		),
 		array(
 			'name'   => 'status',
@@ -70,6 +64,12 @@ $('.search-form form').submit(function(){
 			'type'   => 'raw',
 			'value'  => '!empty($data->created)?date(Yii::app()->params["fullDateFormat"], strtotime($data->created)):""',
 		),
+        array(
+			'name'   => 'parent_id',
+			'header' => 'Creator',
+			'type'   => 'raw',
+			'value'  => '$data->parent->email',
+		),
 		array(
 			'name'   => 'updated',
 			'header' => 'Date Updated',
@@ -77,22 +77,12 @@ $('.search-form form').submit(function(){
 			'value'  => '!empty($data->updated)?date(Yii::app()->params["fullDateFormat"], strtotime($data->updated)):""',
 		),
 
-		array(
+		/*array(
 			'name'   => 'last_logged',
 			'header' => 'Last Logged',
 			'type'   => 'raw',
 			'value'  => '!empty($data->last_logged)?date(Yii::app()->params["fullDateFormat"], strtotime($data->last_logged)):""',
-		),
-		/*
-
-		'status',
-		'firstname',
-		'lastname',
-		'phone',
-		'phone2',
-		'address',
-		'case_type',
-		*/
+		),*/
 		array(
 			'header'      => '',
 			'class' => 'bootstrap.widgets.TbButtonColumn',
@@ -101,3 +91,4 @@ $('.search-form form').submit(function(){
 		),
 	),
 ) ); ?>
+</fieldset>

@@ -6,17 +6,15 @@
 
 <div class="form">
 
-	<?php $form = $this->beginWidget( '\TbActiveForm', array(
-		'id'                   => 'password-form',
-		'layout'               => TbHtml::FORM_LAYOUT_HORIZONTAL,
-		'action' => Yii::app()->createUrl('user/updatepassword', array('id'=>$model->id)),
-		// Please note: When you enable ajax validation, make sure the corresponding
-		// controller action is handling ajax validation correctly.
-		// There is a call to performAjaxValidation() commented in generated controller code.
-		// See class documentation of CActiveForm for details on this.
-		'enableClientValidation' => true,
+	<?php 
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id' => 'password-form',
+        'enableClientValidation' => true,
 		'enableAjaxValidation' => true,
-		'clientOptions'=>array(
+        'layout' => TbHtml::FORM_LAYOUT_HORIZONTAL,
+        'htmlOptions' => array(),
+        'action' => Yii::app()->createUrl('user/updatepassword', array('id'=>$model->id)),
+        'clientOptions'=>array(
 			'validateOnSubmit'=>true,
 			'afterValidate'=>
 				'js: function(form,data,hasError) {
@@ -44,27 +42,18 @@
 		        }
 		    }'
 		),
-	) );
-	?>
-
-	<?php echo $form->errorSummary( $model ); ?>
-	<?php
+    ));
+        
 		echo $form->passwordFieldControlGroup( $model, 'password', array( 'span' => 4, 'maxlength' => 255, 'value'=>'' ) );
-	?>
 
-	<div class="form-actions">
-		<?php
-		echo TbHtml::link('Cancel', array('user/admin'), array('style'=>'margin-right: 5em;'));
-
-		echo TbHtml::submitButton( $model->isNewRecord ? 'Create' : 'Save', array(
-			'color' => TbHtml::BUTTON_COLOR_PRIMARY,
-			'size'  => TbHtml::BUTTON_SIZE_LARGE,
-			'id' => 'change-password-submit',
-		) );
-
-		?>
-	</div>
-
-	<?php $this->endWidget(); ?>
+        echo TbHtml::formActions(array(
+            TbHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('color' => TbHtml::BUTTON_COLOR_PRIMARY,'id' => 'change-password-submit',)),
+            TbHtml::link('Cancel',
+                array('user/admin'),
+                array('class' => 'btn btn-default')
+            )
+        )); 
+        
+        $this->endWidget(); ?>
 
 </div><!-- form -->
