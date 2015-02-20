@@ -12,14 +12,14 @@
  * The followings are the available model relations:
  * @property Authitem $itemname0
  */
-class Authassignment extends CActiveRecord
+class AuthAssignment extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'authassignment';
+		return 'AuthAssignment';
 	}
 
 	/**
