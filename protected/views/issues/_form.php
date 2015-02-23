@@ -19,7 +19,7 @@
             <p class="note">Fields with <span class="required">*</span> are required.</p>
 
             <div class="form-group">
-                <label class="col-sm-2 control-label required" for=<?php echo $model->getAttributeLabel('client_id');?>"><?php echo $model->getAttributeLabel('client_id');?><span class="required">*</span></label>
+                <label class="col-sm-2 control-label required" for="<?php echo $model->getAttributeLabel('client_id');?>"><?php echo $model->getAttributeLabel('client_id');?><span class="required">*</span></label>
                 <div class="col-md-9">
                     <?php
                     $this->widget(

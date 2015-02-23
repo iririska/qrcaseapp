@@ -8,9 +8,9 @@ $this->breadcrumbs = array(
 ?>
 <fieldset>
     <legend>Cases</legend>
-    <?php if (Yii::app()->user->checkAccess('createClient') && !Yii::app()->user->checkAccess('superadmin')) { ?>
+
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12" style="margin-bottom: 15px;">
                 <?php
                 echo TbHtml::linkButton( 'Add Client', array(
                     'color' => TbHtml::BUTTON_COLOR_PRIMARY,
@@ -20,7 +20,7 @@ $this->breadcrumbs = array(
                 ?>
             </div>
         </div>
-    <?php } ?>
+
     <div class="row">
         <div class="col-md-12">
             <?php $this->widget( '\TbListView', array(

@@ -40,7 +40,6 @@ $('.search-form form').submit(function(){
 		</div>
 		<!-- search-form -->
 	</div>
-
 	<div class="col-md-3 clearfix">
 		<?php echo CHtml::link( 'Add Client', array( 'client/create' ), array( 'class' => 'btn btn-success pull-right' ) ); ?>
 	</div>
@@ -56,8 +55,8 @@ $('.search-form form').submit(function(){
 	'columns'               => array(
 		//'id',
 		array(
-			'name'    => 'email',
-			'header'  => 'Email',
+			'name'    => 'firstname',
+			'header'  => 'Client',
 			'type'    => 'raw',
 			'value'   => 'CHtml::link($data->getFullName(), Yii::app()->controller->createUrl("workflow/view", array("id" => $data->current_workflow->id, "c" => $data->id)))',
 			'visible' => true,
@@ -65,14 +64,21 @@ $('.search-form form').submit(function(){
 		//'email',
 		//'password',
 		//'role',
-		/*array(
+        array(
+			'name'    => 'creator_id',
+			'header'  => 'Attorney/Paralegal',
+			'type'    => 'raw',
+			'value'   => '$data->userCreator->email',
+			'visible' => Yii::app()->user->checkAccess('superadmin'),
+		),
+		array(
 			'name'    => 'created',
 			'header'  => 'Created',
 			'type'    => 'raw',
-			'value'   => 'date(Yii::app()->params["fullDateFormat"], strtotime($data->created))',
-			'visible' => true,
+			'value'   => '!empty($data->created)?date(Yii::app()->params["fullDateFormat"], strtotime($data->created)):""',
+			'visible' => Yii::app()->user->checkAccess('superadmin'),
 		),
-		array(
+		/*array(
 			'name'    => 'updated',
 			'header'  => 'Updated',
 			'type'    => 'raw',
@@ -85,15 +91,15 @@ $('.search-form form').submit(function(){
 			'type'    => 'raw',
 			'value'   => '(empty($data->last_logged)?"-":date(Yii::app()->params["fullDateFormat"], strtotime($data->last_logged)))',
 			'visible' => true,
-		),
+		),*/
 		array(
 			'name'    => 'status',
 			'header'  => 'Status',
 			'type'    => 'raw',
 			'value'   => '$data->statusName',
-			'visible' => true,
+			'visible' => Yii::app()->user->checkAccess('superadmin'),
 		),
-		'firstname',
+		/*'firstname',
 		'lastname',
 		'phone',
 		'phone2',

@@ -28,14 +28,6 @@ class ClientController extends Controller
 	public function accessRules()
 	{
 		return array(
-            array('deny', // admin permissions
-				'actions'=>array('create'),
-				'roles'=>array('superadmin'),
-			),
-			/*array('allow',  // allow all clients to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'clients'=>array('*'),
-			),*/
 			array('allow', // allow authenticated client to perform 'create' and 'update' actions
 				'actions'=>array('admin', 'create','update', 'delete', 'view'),
 				'users'=>array('@'),
@@ -155,7 +147,7 @@ class ClientController extends Controller
         );
 
         $model=new Client;
-
+        $user = User::model()->findByPk(Yii::app()->user->id);
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -193,6 +185,7 @@ class ClientController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
+            'user'=>$user
 		));
 	}
 
@@ -217,7 +210,7 @@ class ClientController extends Controller
 
         /* @var Client $model*/
 		$model=$this->loadModel($id);
-
+        $user = User::model()->findByPk(Yii::app()->user->id);
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
@@ -245,6 +238,7 @@ class ClientController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
+            'user'=>$user
 		));
 	}
 

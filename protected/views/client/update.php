@@ -14,5 +14,5 @@ $this->breadcrumbs = array(
 <fieldset>
 	<legend>Modify Client: <?php echo $model->fullname; ?></legend>
 
-    <?php $this->renderPartial( '_form', array( 'model' => $model ) ); ?>
+    <?php $this->renderPartial( '_form', array( 'model' => $model, 'user'=>$user ) ); ?>
 </fieldset>

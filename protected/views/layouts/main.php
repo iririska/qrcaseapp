@@ -50,7 +50,7 @@ if (!Yii::app()->user->isGuest) {
                         array( 'label' => 'Home', 'url' => array( '/' ) ),
                         array( 'label' => 'Administration',
                             'items' => array(
-                                array( 'label' => 'Manage Clients', 'url' => array( '/client/admin' ),'visible' => !Yii::app()->user->checkAccess('superadmin')),
+                                array( 'label' => 'Manage Clients', 'url' => array( '/client/admin' )),
                                 array( 'label' => 'Manage Users', 'url' => array( '/user/admin' ) ),
                                 array( 'label' => 'Grant Access', 'url' => array( '/user/assign' ) ),
                                 '<li class="divider"></li>',
@@ -67,7 +67,7 @@ if (!Yii::app()->user->isGuest) {
 
                         array( 'label'   => 'Calendar',
                                'url'     => array( '/calendar/view' ),
-                               'visible' => !Yii::app()->user->checkAccess('superadmin') && Yii::app()->user->checkAccess('admin')
+                               'visible' => Yii::app()->user->checkAccess('admin')
                         ),
                         array(
                             'label' => "Issues and Actions <sup><span class='badge label-".( ($this->issues == 0 && $this->attorney_actions == 0)? '':'danger')."'>{$this->issues}/{$this->attorney_actions}</span></sup>",
