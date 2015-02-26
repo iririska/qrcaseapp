@@ -47,7 +47,7 @@ if (!Yii::app()->user->isGuest) {
 				'encodeLabel' => false,
 				'items' =>
 					array(
-                        array( 'label' => 'Home', 'url' => array( '/' ) ),
+                        array( 'label' => 'Home', 'url' => '/' ),
                         array( 'label' => 'Administration',
                             'items' => array(
                                 array( 'label' => 'Manage Clients', 'url' => array( '/client/admin' )),
