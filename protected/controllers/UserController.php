@@ -60,9 +60,8 @@ class UserController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
-	{
-		$model=new User;
+	public function actionCreate() {
+		$model=new User('createUser');
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 		if (isset($_POST['User'])) {
@@ -148,8 +147,8 @@ class UserController extends Controller
 
 	public function actionAssign(){
 		$clients = Client::getMyClients();
-		$users = CHtml::listData( User::model()->findByPk(Yii::app()->user->id)->attorney_paralegal, 'id' , 'email' );
-        $users += CHtml::listData( User::model()->findByPk(Yii::app()->user->id)->paralegal, 'id' , 'email' );
+        $users = CHtml::listData( User::model()->findByPk(Yii::app()->user->id)->paralegal, 'id' , 'email' );
+        
 		$assignments = self::getAssignmentsArray();
 
 		if (isset($_POST['ClientUser'])) {

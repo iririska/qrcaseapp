@@ -33,7 +33,6 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
         ?>
 
         <?php 
-
         
         echo $form->textFieldGroup($model, 'email', array( 'wrapperHtmlOptions' => array('class'=>'col-md-4'))); ?>
 
@@ -159,6 +158,7 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
                         <ul>
                             <li><em>A</em>: name calendar</li>
                             <li>select timezone (optional)</li>
+                            
                             <li><em>B</em>: enter following management account: <strong class="text-nowrap"><?php echo Yii::app()->params['googleApiConfig']['service_acc_email']?></strong></li>
                             <li><em>C</em>: select <strong class="text-nowrap">Make changes to events</strong> in dropdown</li>
                             <li>Click <strong>Add Person</strong></li>

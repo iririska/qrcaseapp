@@ -76,7 +76,7 @@ $('.search-form form').submit(function(){
 			'header'  => 'Created',
 			'type'    => 'raw',
 			'value'   => '!empty($data->created)?date(Yii::app()->params["fullDateFormat"], strtotime($data->created)):""',
-			'visible' => Yii::app()->user->checkAccess('superadmin'),
+			'visible' => true, //Yii::app()->user->checkAccess('admin'),
 		),
 		/*array(
 			'name'    => 'updated',
@@ -97,7 +97,7 @@ $('.search-form form').submit(function(){
 			'header'  => 'Status',
 			'type'    => 'raw',
 			'value'   => '$data->statusName',
-			'visible' => Yii::app()->user->checkAccess('superadmin'),
+			'visible' => Yii::app()->user->checkAccess('admin'),
 		),
 		/*'firstname',
 		'lastname',

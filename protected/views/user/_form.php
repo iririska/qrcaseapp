@@ -21,11 +21,7 @@
         if ($model->isNewRecord)
             echo $form->passwordFieldControlGroup( $model, 'password', array( 'span' => 4, 'maxlength' => 255 ) );
 
-        if(Yii::app()->user->isAdmin)
-            echo $form->dropDownListControlGroup( $model, 'role', CHtml::listData( AuthItem::model()->findAll("type='2' AND name != 'superadmin'"), 'name', 'description'), array( 'span' => 2 ) );
-        else {
-            echo $form->dropDownListControlGroup( $model, 'role', CHtml::listData( AuthItem::model()->findAll("name = 'user'"), 'name', 'description'), array( 'span' => 2 ) );
-        }
+        //echo $form->dropDownListControlGroup( $model, 'role', CHtml::listData( AuthItem::model()->findAll("type='2'"), 'name', 'description'), array( 'span' => 2 ) );
 
         echo $form->dropDownListControlGroup( $model, 'status', array(
                 '1' => 'Enabled',

@@ -38,17 +38,14 @@ class User extends CActiveRecord
     const ERR_INACTIVE = 'INACTIVE';
     
     // user role
-    const SUPER_ADMIN = 'superadmin';
     const ADMIN = 'admin';
     const USER = 'user';
     
     const ATTORNEY = 'Attorney';
     const PARALEGAL = 'Paralegal';
-    const ACCOUNT = 'Account';
 
     // Array lists keys with values
     public static $userRole = array(
-        self::SUPER_ADMIN,
         self::ADMIN,
         self::USER,
     );
@@ -111,12 +108,14 @@ class User extends CActiveRecord
 		return array(
             'paralegal' =>  array(self::HAS_MANY, 'User', 'parent_id', 'condition' => 'role=\''.self::USER.'\''),
             'attorney' =>  array(self::HAS_MANY, 'User', 'parent_id', 'condition' => '`attorney`.`role`=\''.self::ADMIN.'\''),
-            'attorney_paralegal' => array(self::HAS_MANY, 'User', array('id' => 'parent_id'), 'through' => 'attorney', 'condition' => '`attorney_paralegal`.`role`=\''.self::USER.'\''),
+            //'attorney_paralegal' => array(self::HAS_MANY, 'User', array('id' => 'parent_id'), 'through' => 'attorney', 'condition' => '`attorney_paralegal`.`role`=\''.self::USER.'\''),
+            
             'clients' => array(self::HAS_MANY, 'Client','creator_id'),
             'client_attorney' => array(self::HAS_MANY, 'Client', array('id' => 'creator_id'), 'through' => 'attorney'),
-            'client_attorney_paralegal' => array(self::HAS_MANY, 'Client', array('id' => 'creator_id'), 'through' => 'attorney_paralegal'),
-            'client_user' =>  array(self::HAS_MANY, 'ClientUser', 'user_id'),
-			'assigned_clients'=>array(self::HAS_MANY, 'Client', array('client_id'=>'id'), 'through'=>'client_user'),
+            //'client_attorney_paralegal' => array(self::HAS_MANY, 'Client', array('id' => 'creator_id'), 'through' => 'attorney_paralegal'),
+            
+            //'client_user' =>  array(self::HAS_MANY, 'ClientUser', 'user_id'),
+			//'assigned_clients'=>array(self::HAS_MANY, 'Client', array('client_id'=>'id'), 'through'=>'client_user'),
 			'steps' => array(self::HAS_MANY, 'Step', 'user_id'),
 			'workflows' => array(self::HAS_MANY, 'Workflow', 'client_id'),
             'issues' => array(self::HAS_MANY, 'OutstandingIssues','author'), 
@@ -239,17 +238,18 @@ class User extends CActiveRecord
 		return CPasswordHelper::hashPassword($password);
 	}
     
-    protected function beforeValidate(){
-        if ($this->isNewRecord){
-            if($this->scenario == 'register'){
-                $this->role = self::SUPER_ADMIN;
+    protected function beforeValidate() {
+        if ($this->isNewRecord) {
+            if ($this->scenario == 'register') {
+                $this->role = self::ADMIN;
                 $this->parent_id = 0;
                 $this->status = 0;
             } elseif(Yii::app()->user->isGuest && isset(Yii::app()->user->token)) {
-                $this->role = self::SUPER_ADMIN;
+                $this->role = self::ADMIN;
                 $this->parent_id = 0;
                 $this->status = 1;
-            } elseif(!Yii::app()->user->isGuest){
+            } elseif(!Yii::app()->user->isGuest && $this->scenario == 'createUser'){
+                $this->role = self::USER;
                 $this->parent_id = Yii::app()->user->id;
                 $this->status = 1;
             }
@@ -267,10 +267,6 @@ class User extends CActiveRecord
             if($this->scenario == 'register') {
                 $this->hash = sha1($this->email.$this->created);
             }
-            
-            if(!Yii::app()->user->isGuest && !Yii::app()->user->isAdmin && $this->role != self::USER){
-                $this->role = self::USER;
-            } 
         } 
 		return parent::beforeSave();
 	}
@@ -287,24 +283,6 @@ class User extends CActiveRecord
         return parent::afterSave();
     }
 
-    /*public function getAssignedClientsIDs(){
-		$_clients_ids = array();
-
-		//if not admin then select assigned Client only
-		if (!Yii::app()->user->isAdmin) {
-			foreach ( $this->assigned_clients as $_client ) {
-				$_clients_ids[] = $_client->id;
-			}
-		} else {
-		//otherwise select all Client
-			foreach ( Client::model()->findAll() as $_client ) {
-				$_clients_ids[] = $_client->id;
-			}
-		}
-
-		return $_clients_ids;
-	}*/
-    
     public function getAllIssues($status = 'all') {
         $st_condition = '';
         if($status != 'all')
@@ -331,8 +309,6 @@ class User extends CActiveRecord
         $manage = array();
         $user = User::model()->findByPk(Yii::app()->user->id);
         $manage += CHtml::listData($user->paralegal, 'id', 'parent_id');
-        $manage += CHtml::listData($user->attorney, 'id', 'parent_id');
-        $manage += CHtml::listData($user->attorney_paralegal, 'id', 'parent_id');
         $ids = implode(',', array_keys($manage));
         return $ids;
     }

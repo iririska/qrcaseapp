@@ -33,7 +33,7 @@ class UserIdentity extends CUserIdentity
 			$this->_id=$this->user->id;
 			$this->username=$this->user->email;
 			$this->errorCode=self::ERROR_NONE;
-			Yii::app()->user->setState('__isAdmin', $this->user->role == 'superadmin');
+			Yii::app()->user->setState('__isAdmin', $this->user->role == 'admin');
 		}
 
 		return $this->errorCode==self::ERROR_NONE;

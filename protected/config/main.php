@@ -20,6 +20,7 @@ return array(
 		'yiiwheels' => realpath(__DIR__ . '/../vendor/yiiwheels'),
 		'booster' =>  realpath(__DIR__ . '/../vendor/yiibooster'),
         'dhtmlscheduler' => realpath(__DIR__ . '/../vendor/dhtml-scheduler'),
+        'fullcalendar' => realpath(__DIR__ . '/../vendor/fullcalendar-2.2.0'),
 		'googleapi' =>  realpath(__DIR__ . '/../vendor/google-api-php-client'),
 	),
 
@@ -37,7 +38,6 @@ return array(
 		'bootstrap.form.*',
 		'bootstrap.helpers.*',
 		'bootstrap.widgets.*',
-
 		'googleapi.GoogleCalendarProxy',
 
 		/*'application.modules.auth.*',
@@ -74,7 +74,7 @@ return array(
 			'allowAutoLogin'=>true,
 			'class' => 'auth.components.AuthWebUser',
 			'admins' => array(
-				'superadmin',
+				'admin',
 				'zergusvcv@gmail.com',
 	            //'test@test.com',
 			),
@@ -89,7 +89,7 @@ return array(
 					'class' => 'auth.components.AuthBehavior',
 				),
 			),
-			'defaultRoles'=>array('guest'),
+			'defaultRoles'=>array('user'),
 		),
 		/*'bootstrap' => array(
 			'class' => 'bootstrap.components.TbApi',
