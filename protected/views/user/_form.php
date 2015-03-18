@@ -8,7 +8,7 @@
     <?php 
     $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id' => 'user-form',
-        'enableAjaxValidation'=>false,
+        'enableAjaxValidation'=>true,
         'layout' => TbHtml::FORM_LAYOUT_HORIZONTAL,
         'htmlOptions' => array(),
     ));

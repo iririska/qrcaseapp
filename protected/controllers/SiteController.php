@@ -52,17 +52,14 @@ class SiteController extends Controller
 			$this->redirect(array('site/login'));
 			Yii::app()->end();
 		}
-
 		$this->render('index');
 	}
 
 	/**
 	 * This is the action to handle external exceptions.
 	 */
-	public function actionError()
-	{
-		if($error=Yii::app()->errorHandler->error)
-		{
+	public function actionError() {
+		if($error=Yii::app()->errorHandler->error) {
 			if(Yii::app()->request->isAjaxRequest)
 				echo $error['message'];
 			else
@@ -73,14 +70,11 @@ class SiteController extends Controller
 	/**
 	 * Displays the contact page
 	 */
-	public function actionContact()
-	{
+	public function actionContact() {
 		$model=new ContactForm;
-		if(isset($_POST['ContactForm']))
-		{
+		if(isset($_POST['ContactForm'])) {
 			$model->attributes=$_POST['ContactForm'];
-			if($model->validate())
-			{
+			if($model->validate()) {
 				$name='=?UTF-8?B?'.base64_encode($model->name).'?=';
 				$subject='=?UTF-8?B?'.base64_encode($model->subject).'?=';
 				$headers="From: $name <{$model->email}>\r\n".
@@ -99,20 +93,16 @@ class SiteController extends Controller
 	/**
 	 * Displays the login page
 	 */
-	public function actionLogin()
-	{
-		if(Yii::app()->user->isGuest)
-        {
-            $model=new LoginForm;
+	public function actionLogin() {
+		if(Yii::app()->user->isGuest) {
+            $model=new LoginForm('standartLogin');
             // if it is ajax validation request
-            if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
-            {
+            if(isset($_POST['ajax']) && $_POST['ajax']==='login-form') {
                 echo CActiveForm::validate($model);
                 Yii::app()->end();
             }
             // collect user input data
-            if(isset($_POST['LoginForm']))
-            {
+            if(isset($_POST['LoginForm'])) {
                 $model->attributes=$_POST['LoginForm'];
                 // validate user input and redirect to the previous page if valid
                 if($model->validate() && $model->login())
@@ -128,8 +118,7 @@ class SiteController extends Controller
 	/**
 	 * Logs out the current user and redirect to homepage.
 	 */
-	public function actionLogout()
-	{
+	public function actionLogout() {
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
 	}
@@ -137,17 +126,13 @@ class SiteController extends Controller
     /**
 	 * Displays the register page
 	 */
-    public function actionRegister()
-    {
-        if (Yii::app()->user->isGuest) 
-        {
+    public function actionRegister() {
+        if (Yii::app()->user->isGuest)  {
             $model = new User('register');
             $this->performAjaxValidation($model);
-            if (isset($_POST['User']))
-            {
+            if (isset($_POST['User'])) {
                 $model->attributes=$_POST['User'];
-                if ($model->save())
-                {
+                if ($model->save()) {
                     //send activation letter with activation key
                     $message = '<table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                     <tbody><tr>
@@ -180,15 +165,11 @@ class SiteController extends Controller
         }
     }
     
-    public function actionActivate($email, $hash)
-    {
-        if (!empty($email) && !empty($hash))
-        {
+    public function actionActivate($email, $hash) {
+        if (!empty($email) && !empty($hash)) {
             $user = User::model()->findByAttributes(array('email' => $email, 'hash' => $hash));
-            if ($user)
-            {
-                if ($user->status == 1)
-                {
+            if ($user) {
+                if ($user->status == 1) {
                     //Create an alert to the user, which appears after a redirect
                     Controller::addAlert('activate','Your account is already active.', 'info');
                     if(!Yii::app()->user->isGuest && $user->id == Yii::app()->user->id)
@@ -196,8 +177,7 @@ class SiteController extends Controller
                     elseif(!Yii::app()->user->isGuest) {
                         Yii::app()->user->logout();
                     }
-                } elseif ($user->status == 0)
-                {
+                } elseif ($user->status == 0) {
                     $user->status = 1;
                     $user->save();
                     //Create an alert to the user, which appears after a redirect
@@ -214,10 +194,8 @@ class SiteController extends Controller
      * @param CModel[] $models  the model to be validated
      * @return boolean false if validation wasn't needed.
      */
-    protected function performAjaxValidation($models)
-    {
-        if(isset($_POST['ajax']) && ($_POST['ajax']==='register-form'))
-        {
+    protected function performAjaxValidation($models) {
+        if(isset($_POST['ajax']) && ($_POST['ajax']==='register-form')) {
             echo CActiveForm::validate($models);
             Yii::app()->end();
         }

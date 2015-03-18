@@ -20,6 +20,9 @@
  * @property string $address
  * @property integer $case_type
  * @property integer $parent_id
+ * @property string $refresh_token
+ * @property string $session_data
+ * @property string $user_data
  *
  * The followings are the available model relations:
  * @property Step[] $steps
@@ -79,9 +82,10 @@ class User extends CActiveRecord
 		// will receive user inputs.
 		return array(
             array('repeatPassword', 'compare', 'compareAttribute' => 'password', 'message' => 'Passwords do not match', 'on' => 'register, updatePassword'),
-			array('email, password, role, parent_id', 'required'),
+            array('password', 'required', 'on' => 'createUser'),
+			array('email, parent_id, role', 'required'),
 			array('password', 'safe', 'on'=>'update'),
-            array('password', 'length', 'min'=>4),
+            array('password', 'length', 'min'=>4, 'on' => 'register, updatepassword'),
             array('password, repeatPassword', 'required', 'on' => 'register, updatepassword'),
 			array('status, parent_id', 'numerical', 'integerOnly'=>true),
 			array('role', 'in', 'range' => self::$userRole),
@@ -123,8 +127,7 @@ class User extends CActiveRecord
     /**
 	 * @return array customized attribute labels (name=>label)
 	 */
-	public function attributeLabels()
-	{
+	public function attributeLabels() {
 		return array(
 			'id' => 'ID',
 			'email' => 'Email',
@@ -140,6 +143,9 @@ class User extends CActiveRecord
 			'phone2' => 'Phone2',
 			'address' => 'Address',
             'parent_id' => 'Parent',
+            'refresh_token' => 'Refresh Token',
+			'session_data' => 'Session Data',
+			'user_data' => 'User Data',
 		);
 	}
 
@@ -155,8 +161,7 @@ class User extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
-	{
+	public function search() {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
@@ -175,14 +180,16 @@ class User extends CActiveRecord
 		$criteria->compare('phone2',$this->phone2,true);
 		$criteria->compare('address',$this->address,true);
         $criteria->compare('parent_id',$this->parent_id,true);
+        $criteria->compare('refresh_token',$this->refresh_token,true);
+		$criteria->compare('session_data',$this->session_data,true);
+		$criteria->compare('user_data',$this->user_data,true);
         
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
     
-    public function searchAccountUsers()
-	{
+    public function searchAccountUsers() {
 		$criteria=new CDbCriteria;
 		$criteria->compare('id',$this->id);
 		$criteria->compare('email',$this->email,true);
@@ -211,8 +218,7 @@ class User extends CActiveRecord
         );
 	}
     
-    
-	/**
+    /**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
@@ -233,19 +239,19 @@ class User extends CActiveRecord
 		return CPasswordHelper::hashPassword($password);
 	}
     
-    protected function beforeValidate()
-    {
-        if ($this->isNewRecord)
-        {
-            if($this->scenario == 'register')
-            {
+    protected function beforeValidate(){
+        if ($this->isNewRecord){
+            if($this->scenario == 'register'){
                 $this->role = self::SUPER_ADMIN;
                 $this->parent_id = 0;
                 $this->status = 0;
-            }
-            else
-            {
+            } elseif(Yii::app()->user->isGuest && isset(Yii::app()->user->token)) {
+                $this->role = self::SUPER_ADMIN;
+                $this->parent_id = 0;
+                $this->status = 1;
+            } elseif(!Yii::app()->user->isGuest){
                 $this->parent_id = Yii::app()->user->id;
+                $this->status = 1;
             }
         }
         return parent::beforeValidate();
@@ -254,43 +260,38 @@ class User extends CActiveRecord
     protected function beforeSave()
     {
         if ($this->isNewRecord && !empty($this->password))
-                $this->password = $this->hashPassword($this->password);
+            $this->password = $this->hashPassword($this->password);
 
-		if ($this->isNewRecord)
-        {
+		if ($this->isNewRecord) {
             $this->created = date('Y-m-d H:i:s');
-            if($this->scenario == 'register')
-            {
+            if($this->scenario == 'register') {
                 $this->hash = sha1($this->email.$this->created);
             }
             
             if(!Yii::app()->user->isGuest && !Yii::app()->user->isAdmin && $this->role != self::USER){
                 $this->role = self::USER;
-            }
+            } 
         } 
 		return parent::beforeSave();
 	}
     
     protected function afterSave()
     {
-        if ($this->isNewRecord)
-        {
+        if ($this->isNewRecord) {
             $role = new AuthAssignment();
             $role->itemname = $this->role;
             $role->userid   = $this->id;
             if (!$role->save()) 
-            {
                 return false;
-            }
         }
         return parent::afterSave();
     }
 
-    public function getAssignedClientsIDs(){
+    /*public function getAssignedClientsIDs(){
 		$_clients_ids = array();
 
 		//if not admin then select assigned Client only
-		if (!Yii::app()->user->getIsAdmin()) {
+		if (!Yii::app()->user->isAdmin) {
 			foreach ( $this->assigned_clients as $_client ) {
 				$_clients_ids[] = $_client->id;
 			}
@@ -302,9 +303,9 @@ class User extends CActiveRecord
 		}
 
 		return $_clients_ids;
-	}
+	}*/
     
-    public function getAllIssues($status = 'all'){
+    public function getAllIssues($status = 'all') {
         $st_condition = '';
         if($status != 'all')
             $st_condition = ' AND status = '.$status;
@@ -315,7 +316,7 @@ class User extends CActiveRecord
         return $issues;
     }
     
-    public function getAllAction($status = 'all'){
+    public function getAllAction($status = 'all') {
         $st_condition = '';
         if($status != 'all')
             $st_condition = ' AND status = '.$status;
@@ -326,8 +327,7 @@ class User extends CActiveRecord
         return $issues;
     }
     
-    public function getManageUsersIds()
-    {
+    public function getManageUsersIds() {
         $manage = array();
         $user = User::model()->findByPk(Yii::app()->user->id);
         $manage += CHtml::listData($user->paralegal, 'id', 'parent_id');
@@ -337,7 +337,7 @@ class User extends CActiveRecord
         return $ids;
     }
     
-    public function  getParent(){
+    public function  getParent() {
         if(!$this->parent_id)
             return false;
         $user = User::model()->findByPk($this->parent_id);
@@ -349,5 +349,9 @@ class User extends CActiveRecord
         $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
         $headers .= "From:" . $from;
         mail($to, $subject, $message, $headers);
+    }
+    
+    public function getEmailWithRole() {
+        return $this->email.' ('.AuthItem::model()->find("name='$this->role'")->description.')';
     }
 }

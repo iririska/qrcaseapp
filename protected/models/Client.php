@@ -73,16 +73,13 @@ class Client extends CActiveRecord
 
             array('phone, phone2', 'match', 'pattern'=>'/^([+]?[0-9\(\)\-]+)$/'),
 
-
 			array('address', 'length', 'max'=>255),
 			array('firstname, lastname, phone, phone2', 'length', 'max'=>45),
 
 			array('ssn', 'length', 'max'=>16),
-
 			array('dob', 'type', 'type' => 'date', 'message' => '{attribute}: is not a date!', 'dateFormat' => 'yyyy-mm-dd'),
 
 			array('gender', 'in', 'range'=>array('m','f')),
-
 			array('driver_license', 'length', 'max'=>16),
 
 			array('created, updated, last_logged, google_calendar_id, change_case_type, document_list_id', 'safe'),
@@ -309,17 +306,18 @@ class Client extends CActiveRecord
     }
 
     /**
-     * Method to get al clients for typehead dropdown
+     * Method to get all clients for typehead dropdown
      * @return array
      */
-    public static function getMyClients(){
+    public static function getMyClients($param = 'fullname'){
         $me = User::model()->findByPk( Yii::app()->user->id );
-        $clients = CHtml::listData( $me->clients, 'id' , 'fullname' );
+        $clients = CHtml::listData( $me->clients, 'id' , $param );
         if($me->role == User::USER){
-            $clients += CHtml::listData( $me->parent->clients, 'id' , 'fullname' );
+            if($me->parent->clients)
+                $clients += CHtml::listData( $me->parent->clients, 'id' , $param );
         }
         elseif($manageUsersIds = $me->manageUsersIds){
-            $clients += CHtml::listData( Client::model()->findAll('creator_id IN('.$manageUsersIds.')'), 'id' , 'fullname' );
+            $clients += CHtml::listData( Client::model()->findAll('creator_id IN('.$manageUsersIds.')'), 'id' , $param );
         }
         return $clients;
     }

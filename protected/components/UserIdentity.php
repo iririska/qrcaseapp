@@ -6,26 +6,34 @@
  * data can identity the user.
  */
 class UserIdentity extends CUserIdentity
-{
+{    
+    /**
+	 * Authenticates a user.
+	 * The example implementation makes sure if the username and password
+	 * are both 'demo'.
+	 * In practical applications, this should be changed to authenticate
+	 * against some persistent user identity storage (e.g. database).
+	 * @return boolean whether authentication succeeds.
+	 */
+    
 	private $_id;
+    public $user;
 
 	public function authenticate()
 	{
 		/* @var User $user */
-		$user = User::model()->find('LOWER(email)=?',array(strtolower($this->username)));
-		if($user===null)
-			$this->errorCode=self::ERROR_USERNAME_INVALID;
-		else if(!$user->validatePassword($this->password))
+		$this->user = User::model()->find('LOWER(email)=?',array(strtolower($this->username)));
+		if($this->user === null)
+			$this->errorCode = self::ERROR_USERNAME_INVALID;
+        elseif(empty($this->password) && empty(Yii::app()->user->token) && !$this->user->validatePassword($this->password))
 			$this->errorCode=self::ERROR_PASSWORD_INVALID;
-        else if($user->status == User::STATUS_NEW) {
+        elseif($this->user->status == User::STATUS_NEW) {
             $this->errorCode = User::ERR_INACTIVE;
-        }
-		else
-		{
-			$this->_id=$user->id;
-			$this->username=$user->email;
+        } else {
+			$this->_id=$this->user->id;
+			$this->username=$this->user->email;
 			$this->errorCode=self::ERROR_NONE;
-			Yii::app()->user->setState('__isAdmin', in_array($user->role,array('superadmin')));
+			Yii::app()->user->setState('__isAdmin', $this->user->role == 'superadmin');
 		}
 
 		return $this->errorCode==self::ERROR_NONE;

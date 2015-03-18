@@ -33,23 +33,7 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
         ?>
 
         <?php 
-        if(Yii::app()->user->checkAccess('superadmin') && $model->creator_id == Yii::app()->user->id ){
-           $model->creator_id = 0;
-           
-        }
-        if (Yii::app()->user->checkAccess('superadmin')):
-            echo $form->dropDownListGroup(
-                $model,
-                'creator_id',
-                array(
-                    'widgetOptions' => array(
-                        'data' => array('Select Attorney...') + CHtml::listData($user->attorney, 'id', 'email'),
-                        'default' => 'eee'
-                    ),
-                    'wrapperHtmlOptions' => array('class'=>'col-md-4')
-                )
-            ); 
-        endif;
+
         
         echo $form->textFieldGroup($model, 'email', array( 'wrapperHtmlOptions' => array('class'=>'col-md-4'))); ?>
 
@@ -142,7 +126,8 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
 
         ?>
 
-        <?php echo $form->textFieldGroup($model, 'google_calendar_id', array(
+        <?php 
+        echo $form->textFieldGroup($model, 'google_calendar_id', array(
             'wrapperHtmlOptions' => array('class'=>'col-md-9'),
             'widgetOptions' => array(
                 'htmlOptions'=>array('placeholder'=>'Existing Google Calendar ID'),

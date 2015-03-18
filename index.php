@@ -11,6 +11,7 @@ defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 
 //SMS library
 require_once(dirname(__FILE__).'/protected/vendor/sms/classes/ets_old.php');
+require(dirname(__FILE__).'/protected/vendor/google-api-php-client_/autoload.php');
 
 require_once($yii);
 Yii::createWebApplication($config)->run();

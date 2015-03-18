@@ -48,7 +48,7 @@ $this->breadcrumbs = array(
 	<?php 
     echo TbHtml::formActions(array(
         TbHtml::submitButton('Login', array('class' => 'btn btn-success')),
-        TbHtml::link('Sing up',
+        TbHtml::link('Sign up',
             array('site/register'),
             array('class' => 'pull-right btn btn-default')
         )
@@ -56,5 +56,14 @@ $this->breadcrumbs = array(
     ?>
     
 	<?php $this->endWidget(); ?>
-
+    
+    <br />
+    
+    <div class="col-md-offset-2 col-md-8 text-center">
+        <a id="googlebtn" href="/auth2/googleoauth2">
+            <div class="icon-g"></div>
+            <div class="textbtn">Sign in with Google</div>
+        </a>
+    </div>
+    
 </div>

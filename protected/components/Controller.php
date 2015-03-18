@@ -38,22 +38,42 @@ class Controller extends CController
 
     public $issues = 0; //indicator
 	public $attorney_actions = 0; //indicator
-
-	protected function beforeRender( $view ) {
-
+    
+    //My local google api config  -  Client ID for web application
+    protected $client_id = '484945006431-6r3rjcmdn2flcsk7mrb8uj4n4oktgn26.apps.googleusercontent.com';
+    protected $client_secret = 'tysvCQaguGltLVEOgP2TtuSL';
+    protected $redirect_uri = 'http://qrcaseapp.com/auth2/oauth2callback';
+    
+    public function GoogleClientConf($addscope = false){
+        $client = new Google_Client();
+        if(!empty(Yii::app()->params['googleApiConfig']['client_id'])) {
+            $client->setClientId(Yii::app()->params['googleApiConfig']['client_id']);
+            $client->setClientSecret(Yii::app()->params['googleApiConfig']['client_secret']);
+            $client->setRedirectUri(Yii::app()->params['googleApiConfig']['redirect_uri']);
+        } else {
+            $client->setClientId($this->client_id);
+            $client->setClientSecret($this->client_secret);
+            $client->setRedirectUri($this->redirect_uri);
+        }
+        $client->setAccessType("offline");
+        if($addscope){
+            $client->addScope(Google_Service_Calendar::CALENDAR);
+            $client->addScope(Google_Service_Oauth2::USERINFO_PROFILE);
+            $client->addScope(Google_Service_Oauth2::USERINFO_EMAIL);
+        }
+        return $client;
+    }
+    
+    protected function beforeRender( $view ) {
         $alert = self::getAlert();
-        if(!empty($alert))
-        {
+        if(!empty($alert)) {
             foreach($alert as $k=>$v){
                 Yii::app()->user->setFlash(key($v), $alert[$k][key($v)]);
             }
-        }
-        
+        }        
         Yii::app()->clientScript->scriptMap=array(
-            //'bootstrap.js'=>false,
             'bootstrap.min.js'=>false,
         );
-
         if (Yii::app()->user->checkAccess('admin')) {
             $this->_user = User::model()->findByPk(Yii::app()->user->id);
             if($allIssues = $this->_user->getallIssues(1))
@@ -97,19 +117,17 @@ class Controller extends CController
 		return $url;
 	}
 
-    public static function validateDate($date, $format = 'm/d/Y')
-    {
+    public static function validateDate($date, $format = 'm/d/Y') {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
     }
     
-    public static function addAlert($name, $message, $status = 'success')
-    {
+    //Alert begin
+    public static function addAlert($name, $message, $status = 'success') {
         if (in_array($status, self::$alerts)) {
-            if(!isset(Yii::app()->session['alert']))
-            {
+            if(!isset(Yii::app()->session['alert'])) {
                 Yii::app()->session['alert'] = array($name => array($status => $message));
-            }else{
+            } else {
                 $a = Yii::app()->session['alert'];
                 $a[$name] = array($status => $message);
                 Yii::app()->session['alert'] = $a;
@@ -119,23 +137,19 @@ class Controller extends CController
         return false;
     }
     
-    public static function delAlert($name = null)
-    {
-        if($name)
-        {
+    public static function delAlert($name = null) {
+        if($name) {
             $a = Yii::app()->session['alert'];
             unset($a[$name]);
             Yii::app()->session['alert'] = $a;
-        }else
+        } else
             unset(Yii::app()->session['alert']);
         return true;
     }
     
-    public static function getAlert($name = null)
-    {
+    public static function getAlert($name = null) {
         $alert = null;
-        if(!empty(Yii::app()->session['alert']))
-        {
+        if(!empty(Yii::app()->session['alert'])) {
             $alert1 = Yii::app()->session['alert'];
             if($name && isset($alert1[$name]))
                 $alert = $alert1[$name];
@@ -145,4 +159,5 @@ class Controller extends CController
         }
         return $alert;
     }
+    //Alert end
 }
