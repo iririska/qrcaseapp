@@ -64,12 +64,6 @@ $('.search-form form').submit(function(){
 			'type'   => 'raw',
 			'value'  => '!empty($data->created)?date(Yii::app()->params["fullDateFormat"], strtotime($data->created)):""',
 		),
-        array(
-			'name'   => 'parent_id',
-			'header' => 'Creator',
-			'type'   => 'raw',
-			'value'  => '$data->parent->email',
-		),
 		array(
 			'name'   => 'updated',
 			'header' => 'Date Updated',

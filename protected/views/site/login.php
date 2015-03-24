@@ -57,13 +57,4 @@ $this->breadcrumbs = array(
     
 	<?php $this->endWidget(); ?>
     
-    <br />
-    
-    <div class="col-md-offset-2 col-md-8 text-center">
-        <a id="googlebtn" href="/auth2/googleoauth2">
-            <div class="icon-g"></div>
-            <div class="textbtn">Sign in with Google</div>
-        </a>
-    </div>
-    
 </div>

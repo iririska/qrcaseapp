@@ -81,7 +81,7 @@
 JS
 
                 ),
-                'data' => CHtml::listData( Client::model()->findAll(), 'id' , 'fullnamewithemail' ),
+                'data' => Client::getMyClients('fullnamewithemail'),
                 'htmlOptions' => array(
                     'multiple' => false,
                 )

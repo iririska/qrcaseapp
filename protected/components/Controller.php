@@ -34,7 +34,7 @@ class Controller extends CController
 	 * for more details on how to specify this property.
 	 */
 	public $breadcrumbs=array();
-    public $_user;
+    public $_user = null;
 
     public $issues = 0; //indicator
 	public $attorney_actions = 0; //indicator
@@ -64,6 +64,17 @@ class Controller extends CController
         return $client;
     }
     
+    protected function beforeAction($action){
+        if(!Yii::app()->user->isGuest)
+            $this->_user = User::model()->findByPk(Yii::app()->user->id);
+        
+        if($this->id != 'calendar' && $this->id != 'auth2') {
+            Yii::app()->user->setState('__calendar_client', '');
+            self::delAlert('calendar_client');
+        }
+        return parent::beforeAction($action);
+    }
+
     protected function beforeRender( $view ) {
         $alert = self::getAlert();
         if(!empty($alert)) {
@@ -74,8 +85,7 @@ class Controller extends CController
         Yii::app()->clientScript->scriptMap=array(
             'bootstrap.min.js'=>false,
         );
-        if (Yii::app()->user->checkAccess('admin')) {
-            $this->_user = User::model()->findByPk(Yii::app()->user->id);
+        if (Yii::app()->user->checkAccess('admin') && $this->_user) {
             if($allIssues = $this->_user->getallIssues(1))
                 $this->issues = count($allIssues);
             if($allAction = $this->_user->getallAction(1))

@@ -21,7 +21,7 @@
  */
 class CalendarEvent extends CActiveRecord
 {
-	public $client_id;
+	//public $client_id;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -48,13 +48,13 @@ class CalendarEvent extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('title', 'required'),
+			array('title, client_id', 'required'),
 			array('title, summary, location', 'length', 'max'=>255),
 			array('color', 'length', 'max'=>50),
 			array('description, start, end, eventDate, updated, client_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, title, summary, description, color, start, end, eventDate, location, created, updated', 'safe', 'on'=>'search'),
+			array('id, title, summary, client_id, description, color, start, end, eventDate, location, created, updated', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -86,6 +86,7 @@ class CalendarEvent extends CActiveRecord
 			'location' => 'Location',
 			'created' => 'Created',
 			'updated' => 'Updated',
+            'client_id' => 'client_id'
 		);
 	}
 
@@ -118,6 +119,7 @@ class CalendarEvent extends CActiveRecord
 		$criteria->compare('location',$this->location,true);
 		$criteria->compare('created',$this->created,true);
 		$criteria->compare('updated',$this->updated,true);
+        $criteria->compare('client_id',$this->client_id,true);        
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -133,5 +135,51 @@ class CalendarEvent extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
-	}
+	}    
+    
+    /*
+     * method add new event to Calendar
+     * $gClient = Google_Client() with all params
+     * $google_calendar_id - ****@group.calendar.google.com
+     * return google_calendar_event_id or false
+     */
+    public function createEvent($gClient, $google_calendar_id){
+        if(empty($this->google_calendar_id))
+            $this->google_calendar_id = $google_calendar_id;
+        $service = new Google_Service_Calendar($gClient);
+        
+        $event = new Google_Service_Calendar_Event();
+        $event->setSummary( $this->title );
+        $event->setLocation( $this->location );
+        $event->setDescription( $this->description );
+
+        $start = new Google_Service_Calendar_EventDateTime();
+        $start->setDateTime( date('c', strtotime($this->start)) ); //$start->setDateTime('2011-06-03T10:00:00.000-07:00');
+        $start->setTimeZone( 'America/Los_Angeles' );
+        $event->setStart($start);
+
+        $end = new Google_Service_Calendar_EventDateTime();
+        if (!empty($this->end))
+            $end->setDateTime( date('c', strtotime($this->end)) ); //$end->setDateTime('2011-06-03T10:25:00.000-07:00');
+        else
+            $end->setDateTime( date('c', strtotime($this->start)+24*3600) );
+        $end->setTimeZone( 'America/Los_Angeles' );
+        $event->setEnd( $end );
+
+        //$attendee1 = new Google_Service_Calendar_EventAttendee();
+        //$attendee1->setEmail('attendeeEmail');
+        // ...
+       // $attendees = array($attendee1,
+                           // ...
+        //                  );
+        //$event->attendees = $attendees;
+
+        $createdEvent = $service->events->insert($this->google_calendar_id, $event);
+        if($id = $createdEvent->getId()){
+            $this->google_calendar_event_id = $id;
+            if($this->save())
+                return $id;
+        }
+        return false;
+    }
 }

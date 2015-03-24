@@ -126,7 +126,7 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
         ?>
 
         <?php 
-        echo $form->textFieldGroup($model, 'google_calendar_id', array(
+        /*echo $form->textFieldGroup($model, 'google_calendar_id', array(
             'wrapperHtmlOptions' => array('class'=>'col-md-9'),
             'widgetOptions' => array(
                 'htmlOptions'=>array('placeholder'=>'Existing Google Calendar ID'),
@@ -137,7 +137,7 @@ if (Controller::validateDate($model->dob) || Controller::validateDate($model->do
                  Calendar ID can be found in calendar properties and must be a string of type <em>r1hnd4kr49dbcp6c3n4l8fasjs@group.calendar.google.com</em><br>
                  <a href="#more-calendar-id" id="more-calendar-info">more info</a>
                 '
-        )); ?>
+        ));*/ ?>
 
         <div class="form-group" id="hint-more-gcal">
             <label class="col-sm-3 control-label">&nbsp;</label>

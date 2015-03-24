@@ -133,18 +133,11 @@ class ClientController extends Controller
         exit;*/
         //====================================================================================
         //====================================================================================
-
-        Yii::app()->getClientScript()->registerScriptFile(
-            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/moment.min.js' ), CClientScript::POS_END
-        );
-
-        Yii::app()->getClientScript()->registerScriptFile(
-            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/daterangepicker.js' ), CClientScript::POS_END
-        );
-
-        Yii::app()->getClientScript()->registerCssFile(
-            Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'). '/daterangepicker-bs3.css' )
-        );
+        
+        $daterangepicker = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.vendor.daterangepicker'));
+        Yii::app()->getClientScript()->registerScriptFile($daterangepicker. '/moment.min.js', CClientScript::POS_END);
+        Yii::app()->getClientScript()->registerScriptFile($daterangepicker. '/daterangepicker.js', CClientScript::POS_END);
+        Yii::app()->getClientScript()->registerCssFile($daterangepicker. '/daterangepicker-bs3.css');
 
         $model=new Client;
         $user = User::model()->findByPk(Yii::app()->user->id);
@@ -155,10 +148,11 @@ class ClientController extends Controller
 
 			$model->attributes=$_POST['Client'];
 			//$model->email = rand().$model->email;//TODO remove
+            $model->google_calendar_id = ' ';
 
-            if ($model->validate() && empty($model->google_calendar_id)) $model->google_calendar_id = $this->_getNewCalendar();
+            //if ($model->validate() && empty($model->google_calendar_id)) $model->google_calendar_id = $this->_getNewCalendar();
 
-            if ($model->save()) {
+            if ($model->validate() && $model->save()) {
 
                 // create workflow togther with steps from WorkflowStepsByType
 				// @see app/models/Workflow::afterSave

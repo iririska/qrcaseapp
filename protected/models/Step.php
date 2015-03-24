@@ -71,7 +71,15 @@ class Step extends CActiveRecord
 			'name' => 'High',
 		),
 	);
-	/**
+    
+    public $getColor = array(
+        'none' => '#9FC6E7',
+        'low' => '#7BD148',
+        'medium' => '#FFAD46',
+        'high' => '#FA573C'
+    );
+
+        /**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
@@ -89,8 +97,8 @@ class Step extends CActiveRecord
 
 				),
 				'toOutput' => array(
-					'date_start' => 'm/d/Y',
-					'date_end' => 'm/d/Y',
+					'date_start' => 'm/d/Y H:i:s',
+					'date_end' => 'm/d/Y H:i:s',
 					'created' => 'm/d/Y H:i:s',
 					'updated' => 'm/d/Y H:i:s',
 				),
@@ -198,7 +206,8 @@ class Step extends CActiveRecord
 	}
 
 	protected function beforeValidate() {
-		if (!empty($this->created)) $this->created = date('Y-m-d H:i:s', strtotime($this->created));
+		if (!empty($this->created)) 
+            $this->created = date('Y-m-d H:i:s', strtotime($this->created));
 		return parent::beforeValidate();
 	}
 
@@ -285,5 +294,29 @@ class Step extends CActiveRecord
 		if (empty($_priorities[$index]['name'])) $index = 0;
 		return ( $lowercase ) ? mb_strtolower( $_priorities[$index]['name'] ) : $_priorities[ $index ]['name'];
 	}
+    
+    /*
+     * method create new event and inser to calendarEvent table
+     * return event object(calendarEvent) or false;
+     */
+    public function createNewEvent($googl_cal_id, $client_id){
+
+        $event = new CalendarEvent();
+        
+        $event->title = $this->title;
+        $event->google_calendar_id = $googl_cal_id;
+        $event->google_calendar_event_id = '';
+        $event->summary = $this->title;
+        $event->client_id = $client_id;
+        $event->description = '';
+        $event->color = $this->getColor[$this->priority];
+        $event->start = date( 'Y-m-d H:i:s', strtotime($this->date_start));
+        $event->end = date( 'Y-m-d H:i:s', strtotime($this->date_end));
+        
+        if($event->save()){
+            return $event;
+        }
+        return false;
+    }
 
 }

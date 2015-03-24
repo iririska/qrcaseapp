@@ -82,8 +82,8 @@ class Client extends CActiveRecord
 			array('gender', 'in', 'range'=>array('m','f')),
 			array('driver_license', 'length', 'max'=>16),
 
-			array('created, updated, last_logged, google_calendar_id, change_case_type, document_list_id', 'safe'),
-			array('id, email, created, updated, last_logged, status, creator_id, firstname, lastname, phone, phone2, address, case_type', 'safe', 'on'=>'search'),
+			//array('created, updated, last_logged, google_calendar_id, change_case_type, document_list_id', 'safe'),
+			array('id, email, created, updated, google_calendar_id, last_logged, status, creator_id, firstname, lastname, phone, phone2, address, case_type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -273,9 +273,9 @@ class Client extends CActiveRecord
         return User::model()->findByPk($this->creator_id);
     }
 
-    public function getGoogleCalendarId(){
+    /*public function getGoogleCalendarId(){
 		return $this->google_calendar_id;
-	}
+	}*/
 
     protected function beforeValidate()
     {
