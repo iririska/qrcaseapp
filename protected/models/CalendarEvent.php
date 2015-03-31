@@ -14,6 +14,7 @@
  * @property string $eventDate
  * @property string $location
  * @property string $client_id
+ * @property string $step_id
  * @property string $google_calendar_id
  * @property string $google_calendar_event_id
  * @property string $created
@@ -54,7 +55,7 @@ class CalendarEvent extends CActiveRecord
 			array('description, start, end, eventDate, updated, client_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, title, summary, client_id, description, color, start, end, eventDate, location, created, updated', 'safe', 'on'=>'search'),
+			array('id, title, summary, client_id, step_id, description, color, start, end, eventDate, location, created, updated', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -86,7 +87,8 @@ class CalendarEvent extends CActiveRecord
 			'location' => 'Location',
 			'created' => 'Created',
 			'updated' => 'Updated',
-            'client_id' => 'client_id'
+            'client_id' => 'client_id',
+            'step_id' => 'step_id'
 		);
 	}
 
@@ -119,7 +121,8 @@ class CalendarEvent extends CActiveRecord
 		$criteria->compare('location',$this->location,true);
 		$criteria->compare('created',$this->created,true);
 		$criteria->compare('updated',$this->updated,true);
-        $criteria->compare('client_id',$this->client_id,true);        
+        $criteria->compare('client_id',$this->client_id,true);     
+        $criteria->compare('step_id',$this->step_id,true);             
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

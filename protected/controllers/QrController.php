@@ -86,14 +86,14 @@ class QRController extends Controller
 
         $image = $this->getQRImage(
             Yii::app()->createAbsoluteUrl( "workflow/view", array(
-                "id" => $client->current_workflow->id,
+                "id" => $client->workflow->id,
                 "c"  => $client->id
             ) )
         );
 
         if (!$client) throw new CHttpException(404, 'No such client exists');
 
-        if ($id != $client->current_workflow->id) throw new CHttpException(404, 'No such workflow for this client');
+        if ($id != $client->workflow->id) throw new CHttpException(404, 'No such workflow for this client');
 
         if (empty($image) || !file_exists(realpath( Yii::getPathOfAlias( 'webroot.qr' ) .'/' . basename($image) ))) throw new CHttpException(404, 'No such QR code exits');
 

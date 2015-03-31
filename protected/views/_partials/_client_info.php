@@ -6,7 +6,7 @@
 
 $qr_image = $this->getQRImage(
     Yii::app()->createAbsoluteUrl( "workflow/view", array(
-        "id" => $data->current_workflow->id,
+        "id" => $data->workflow->id,
         "c"  => $data->id
     ) )
 );
@@ -16,7 +16,7 @@ $qr_image = $this->getQRImage(
 <address style="position: relative">
 	<div class="text-center qr-image">
 		<img class="small to-enlarge" src="<?php echo $qr_image?>">
-        <a class="qr-print glyphicon glyphicon-print" href="<?php echo Yii::app()->createUrl('qr/print', array("id" => $data->current_workflow->id, "c"  => $data->id));?>" target="_qr" title="Click for printable version"></a>
+        <a class="qr-print glyphicon glyphicon-print" href="<?php echo Yii::app()->createUrl('qr/print', array("id" => $data->workflow->id, "c"  => $data->id));?>" target="_qr" title="Click for printable version"></a>
 	</div>
 	<strong>Email:</strong> <?php echo $data->email; ?><br>
 	<strong>Address:</strong> <?php echo $data->address; ?><br>

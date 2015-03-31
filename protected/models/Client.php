@@ -27,8 +27,7 @@
  *
  * The followings are the available model relations:
  * @property Step[] $steps
- * @property Workflow[] $workflows
- * @property Workflow $current_workflow
+ * @property Workflow $workflow
  * @property ClientNote[] $notes
  */
 class Client extends CActiveRecord
@@ -67,7 +66,7 @@ class Client extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('email, case_type, firstname, lastname, phone, creator_id', 'required'),
-			array('status, case_type, creator_id', 'numerical', 'integerOnly'=>true),
+			array('status, case_type, creator_id, document_list_id', 'numerical', 'integerOnly'=>true),
 			array('email', 'email'),
 			array('email', 'unique'),
 
@@ -96,8 +95,7 @@ class Client extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'steps' => array(self::HAS_MANY, 'Step', 'user_id'),
-			'workflows' => array(self::HAS_MANY, 'Workflow', 'client_id'),
-			'current_workflow' => array(self::HAS_ONE, 'Workflow', 'client_id'),
+			'workflow' => array(self::HAS_ONE, 'Workflow', 'client_id'),
 			'notes' => array(self::HAS_MANY, 'ClientNote', 'client_id'),
 			//'client_user' => array(self::HAS_MANY,'ClientUser','client_id'),
 			//'assigned_users'=>array(self::HAS_MANY, 'User', array('id'=>'user_id'), 'through'=>'client_user'),
@@ -282,9 +280,6 @@ class Client extends CActiveRecord
         //DOB
         if (!empty($this->dob) && Controller::validateDate($this->dob)) 
             $this->dob = date('Y-m-d', strtotime($this->dob));
-
-        //document list id
-        $this->document_list_id = (int)$this->document_list_id;
         
         if($this->isNewRecord && !Yii::app()->user->isGuest)
             $this->creator_id = Yii::app()->user->id;

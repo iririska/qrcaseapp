@@ -57,20 +57,7 @@ class Step extends CActiveRecord
 		),
 	);
 
-	public static $prioritySetup = array(
-		array(
-			'name' => 'None',
-		),
-		array(
-			'name' => 'Low',
-		),
-		array(
-			'name' => 'Medium',
-		),
-		array(
-			'name' => 'High',
-		),
-	);
+	public static $prioritySetup = array('None', 'Low', 'Medium', 'High');
     
     public $getColor = array(
         'none' => '#9FC6E7',
@@ -82,12 +69,11 @@ class Step extends CActiveRecord
         /**
 	 * @return string the associated database table name
 	 */
-	public function tableName()
-	{
+	public function tableName() {
 		return 'Step';
 	}
 
-	public function behaviors(){
+	public function behaviors() {
 		return array(
 			'ZPrepareDateBehavior' => array(
 				'class' => 'application.extensions.behaviors.ZPrepareDateBehavior',
@@ -115,8 +101,7 @@ class Step extends CActiveRecord
 	/**
 	 * @return array validation rules for model attributes.
 	 */
-	public function rules()
-	{
+	public function rules() {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
@@ -131,13 +116,13 @@ class Step extends CActiveRecord
 	/**
 	 * @return array relational rules.
 	 */
-	public function relations()
-	{
+	public function relations() {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
 			'notes' => array(self::HAS_MANY, 'Note', 'step_id'),
 			'workflow' => array(self::BELONGS_TO, 'Workflow', 'workflow_id'),
+            //'calendarEvent' => array(self::HAS_ONE, 'CalendarEvent', 'step_id'),
 		);
 	}
 
@@ -227,7 +212,7 @@ class Step extends CActiveRecord
 	public function getPriorityForList(){
 		$_priorities = array();
 		foreach (self::$prioritySetup as $i=>$_priority ) {
-			$_priorities[ mb_strtolower($_priority['name']) ] = $_priority['name'];
+			$_priorities[ mb_strtolower($_priority) ] = $_priority;
 		}
 		return $_priorities;
 	}
@@ -235,7 +220,7 @@ class Step extends CActiveRecord
 	public static function getPriorityEnum(){
 		$_priorities = array();
 		foreach (self::$prioritySetup as $i=>$_priority ) {
-			$_priorities[$i] = mb_convert_case($_priority['name'], MB_CASE_LOWER);
+			$_priorities[$i] = mb_convert_case($_priority, MB_CASE_LOWER);
 		}
 		return $_priorities;
 	}
@@ -282,7 +267,7 @@ class Step extends CActiveRecord
 	public function getPriorityIndex(){
 		$_priorities = self::getPriorityEnum();
 		foreach ( self::$prioritySetup as $i=>$_p ) {
-			if (mb_strtolower($_p['name']) == $this->priority) return $i;
+			if (mb_strtolower($_p) == $this->priority) return $i;
 		}
 	}
 
@@ -291,24 +276,48 @@ class Step extends CActiveRecord
 	*/
 	public function getPriorityString($index, $lowercase=false){
 		$_priorities = self::$prioritySetup;
-		if (empty($_priorities[$index]['name'])) $index = 0;
-		return ( $lowercase ) ? mb_strtolower( $_priorities[$index]['name'] ) : $_priorities[ $index ]['name'];
+		if (empty($_priorities[$index])) $index = 0;
+		return ( $lowercase ) ? mb_strtolower( $_priorities[$index] ) : $_priorities[ $index ];
 	}
     
     /*
      * method create new event and inser to calendarEvent table
      * return event object(calendarEvent) or false;
      */
-    public function createNewEvent($googl_cal_id, $client_id){
+    public function createNewEvent($googl_cal_id = '', $client_id = ''){
 
         $event = new CalendarEvent();
         
         $event->title = $this->title;
+        $event->summary = $this->title;
         $event->google_calendar_id = $googl_cal_id;
         $event->google_calendar_event_id = '';
-        $event->summary = $this->title;
         $event->client_id = $client_id;
         $event->description = '';
+        $event->color = $this->getColor[$this->priority];
+        $event->start = date( 'Y-m-d H:i:s', strtotime($this->date_start));
+        $event->end = date( 'Y-m-d H:i:s', strtotime($this->date_end));
+        
+        if($event->save()){
+            return $event;
+        }
+        return false;
+    }
+    
+    /*
+     * method update event (use $event_id) and inser to calendarEvent table
+     * return event object(calendarEvent) or false;
+     */
+    public function updateEvent($event_id, $googl_cal_id = ''){
+
+        $event = CalendarEvent::model()->findByPk($event_id);
+        
+        $event->title = $this->title;
+        $event->summary = $this->title;
+        if($googl_cal_id)
+            $event->google_calendar_id = $googl_cal_id;
+        if($this->description)
+            $event->description = $this->description;
         $event->color = $this->getColor[$this->priority];
         $event->start = date( 'Y-m-d H:i:s', strtotime($this->date_start));
         $event->end = date( 'Y-m-d H:i:s', strtotime($this->date_end));

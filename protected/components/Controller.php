@@ -56,6 +56,10 @@ class Controller extends CController
             $client->setRedirectUri($this->redirect_uri);
         }
         $client->setAccessType("offline");
+        if(isset(Yii::app()->user->approval_prompt) && Yii::app()->user->approval_prompt == 'force') {
+            $client->setApprovalPrompt('force');
+            Yii::app()->user->setState('approval_prompt', '');
+        }
         if($addscope){
             $client->addScope(Google_Service_Calendar::CALENDAR);
             $client->addScope(Google_Service_Oauth2::USERINFO_PROFILE);

@@ -29,7 +29,7 @@ $this->breadcrumbs=array(
 				'name'   => 'client_id',
 				'header' => 'Client',
 				'type'   => 'raw',
-				'value'  => 'CHtml::link("{$data->client->firstname} {$data->client->lastname} {$data->client->email}", array("workflow/view", "id"=>$data->client->current_workflow->id, "c"=>$data->client->id))',
+				'value'  => 'CHtml::link("{$data->client->firstname} {$data->client->lastname} {$data->client->email}", array("workflow/view", "id"=>$data->client->workflow->id, "c"=>$data->client->id))',
 			),
 			array(
 				'name'   => 'author',

@@ -20,20 +20,7 @@ class WorkflowStepsByType extends CActiveRecord
 	/**
 	 * @see also /models/Step.php
 	 */
-	public $prioritySetup = array(
-		array(
-			'name' => 'None',
-		),
-		array(
-			'name' => 'Low',
-		),
-		array(
-			'name' => 'Medium',
-		),
-		array(
-			'name' => 'High',
-		),
-	);
+	public $prioritySetup = array('None', 'Low', 'Medium', 'High');
 
 	/**
 	 * @return string the associated database table name
@@ -142,7 +129,7 @@ class WorkflowStepsByType extends CActiveRecord
 	public function getPriorityEnum(){
 		$_priorities = array();
 		foreach ($this->prioritySetup as $i=>$_priority ) {
-			$_priorities[$i] = mb_convert_case($_priority['name'], MB_CASE_LOWER);
+			$_priorities[$i] = mb_convert_case($_priority, MB_CASE_LOWER);
 		}
 		return $_priorities;
 	}

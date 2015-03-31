@@ -121,7 +121,7 @@ class CalendarController extends Controller {
     public function actionCreateCalendar(){
         $calendar = new Calendars();
         $this->performAjaxValidation($calendar);
-        $error = false;
+        $error = 0;
         $clientModel = Client::model()->findByPk($calendar->client_id);
         if (Yii::app()->request->isAjaxRequest && !empty($_POST['Calendars'])) {
             $calendar = new Calendars();
@@ -132,6 +132,9 @@ class CalendarController extends Controller {
 
                 if($this->setGoogleClient($user->session_data, $user->refresh_token))
                     $calendar->google_calendar_id = $calendar->createCalendar($this->_gclient);
+                else 
+                    $error = 1;
+                    
             }
             if($calendar->google_calendar_id) {
                 if($calendar->save()){
@@ -141,22 +144,19 @@ class CalendarController extends Controller {
                     if($clientModel->save(false)) {
                                         
                         $event = array();
-                        $workflows = $clientModel->workflows;
-                        foreach($workflows as $w){
-                            $steps = $w->steps;
-                            foreach($steps as $step){
-                                $calevent = null;
-                                if($calevent = $step->createNewEvent($calendar->google_calendar_id, $calendar->client_id)){
-                                    if($calevent->createEvent($this->_gclient, $calendar->google_calendar_id)){
-                                    }  else {
-                                        $error = 1;
-                                    }
+                        $workflow = $clientModel->workflow;
+                        $steps = $workflow->steps;
+                        foreach($steps as $step){
+                            $calevent = null;
+                            if($calevent = $step->createNewEvent($calendar->google_calendar_id, $calendar->client_id)){
+                                if($calevent->createEvent($this->_gclient, $calendar->google_calendar_id)){
+                                }  else {
+                                    $error = 2;
                                 }
                             }
                         }
-                    } else {
-                        $error = 2;
-                    }
+                    } else 
+                        $error = 3;
                 }
             }
         }
@@ -185,6 +185,7 @@ class CalendarController extends Controller {
      */
 	public function actionGetEvents($start=null, $end=null, $timezone=null, $c=null){
         $output_arrays = array();
+        $events = array();
         if(Yii::app()->user->__calendar_client){
             $range_start = Event::parseDateTime($start);
             $range_end = Event::parseDateTime($end);
@@ -194,16 +195,17 @@ class CalendarController extends Controller {
             }
 
             $client = Client::model()->findByPk(Yii::app()->user->__calendar_client);
-
-            $events = (array)CalendarEvent::model()->findAll(
-                "((`start` >= :start AND `end` <= :end)
-                OR (`eventDate` BETWEEN :start AND :end )
-                OR (`start` >= :start AND `end` IS NULL)) 
-                AND `google_calendar_id` = '".$client->google_calendar_id."'"
-                , array(
-                ':start' => (empty($start)) ? date('Y-m-d') : $range_start->format('Y-m-d H:i:s'),
-                ':end' => (empty($end)) ? date('Y-m-d') : $range_end->format('Y-m-d H:i:s'),
-            ));
+            if($client->google_calendar_id){
+                $events = (array)CalendarEvent::model()->findAll(
+                    "((`start` >= :start AND `end` <= :end)
+                    OR (`eventDate` BETWEEN :start AND :end )
+                    OR (`start` >= :start AND `end` IS NULL)) 
+                    AND `google_calendar_id` = '".$client->google_calendar_id."'"
+                    , array(
+                    ':start' => (empty($start)) ? date('Y-m-d') : $range_start->format('Y-m-d H:i:s'),
+                    ':end' => (empty($end)) ? date('Y-m-d') : $range_end->format('Y-m-d H:i:s'),
+                ));
+            }
             
             foreach ($events as $data) {
 
@@ -323,12 +325,18 @@ class CalendarController extends Controller {
     public function refreshTokenG($refresh_token) {
         $user = User::model()->findByAttributes(array('refresh_token' => $refresh_token));
         if($user) {
-            $this->_gclient->refreshToken($refresh_token);
+            try {
+                $this->_gclient->refreshToken($refresh_token);
+            } catch (Google_Auth_Exception $e) {
+                Yii::app()->user->setState('approval_prompt', 'force');
+                Controller::addAlert('google_token','Something wrong! Please, try <a href="/auth2/googleoauth2">activate Google Account</a> again.','error');
+                    return false;
+            }
             $access_token = $this->_gclient->getAccessToken();
             $user->session_data = $access_token;
             if($user->save())
                 return true;
-            Controller::addAlert('google_token','<strong>Need refresh token.</strong>','warning');
+            
         } else
             Controller::addAlert('google_token','User with this Refresh Token not exist','error');
         return false;
@@ -358,9 +366,10 @@ class CalendarController extends Controller {
         $userT = $this->_user;
         if(Yii::app()->user->isAdmin) { //Check user role
             //if user - admin, he can creating calendar
-            if(empty($this->_user->refresh_token)) //This User not registered API Calendar yet 
+            if(empty($this->_user->refresh_token)) {//This User not registered API Calendar yet 
+                Yii::app()->user->setState('approval_prompt', 'force');
                 $alert .= $this->alert_2;
-            else
+            } else
                 $alert .= $this->alert_3;
         } else {
             //if user - user (paralegal), finding his attorney

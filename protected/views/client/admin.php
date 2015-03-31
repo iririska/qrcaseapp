@@ -58,7 +58,7 @@ $('.search-form form').submit(function(){
 			'name'    => 'firstname',
 			'header'  => 'Client',
 			'type'    => 'raw',
-			'value'   => 'CHtml::link($data->fullnamewithemail, Yii::app()->controller->createUrl("workflow/view", array("id" => $data->current_workflow->id, "c" => $data->id)))',
+			'value'   => 'CHtml::link($data->fullnamewithemail, Yii::app()->controller->createUrl("workflow/view", array("id" => $data->workflow->id, "c" => $data->id)))',
 			'visible' => true,
 		),
         array(
@@ -121,7 +121,7 @@ $('.search-form form').submit(function(){
 				),*/
 				/*'workspace' => array(
 					'icon'    => \TbHtml::ICON_LIST_ALT,     // text label of the button
-					'url'      => 'Yii::app()->controller->createUrl("workflow/view", array("id" => $data->current_workflow->id, "c" => $data->id))',
+					'url'      => 'Yii::app()->controller->createUrl("workflow/view", array("id" => $data->workflow->id, "c" => $data->id))',
 					'label' => 'Workspace',
 					//'imageUrl' => false,
 					//'options'  => array( 'class' => 'btn btn-success show-modal modal-big', 'title' => 'Workspace' ),

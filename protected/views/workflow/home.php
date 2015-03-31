@@ -45,7 +45,7 @@ $this->breadcrumbs = array(
 					'name'   => 'client_id',
 					'header' => 'Client',
 					'type'   => 'raw',
-					'value'  => '(!empty($data->client)) ? CHtml::link("{$data->client->firstname} {$data->client->lastname} {$data->client->email}", array("workflow/view", "id"=>(!empty($data->client->current_workflow))?$data->client->current_workflow->id:"", "c"=>(!empty($data->client->id))?$data->client->id:"")) : ""',
+					'value'  => '(!empty($data->client)) ? CHtml::link("{$data->client->firstname} {$data->client->lastname} {$data->client->email}", array("workflow/view", "id"=>(!empty($data->client->workflow))?$data->client->workflow "c"=>(!empty($data->client->id))?$data->client->id:"")) : ""',
 				),
 				array(
 					'name'   => 'author',
@@ -104,7 +104,7 @@ $this->breadcrumbs = array(
                         'name' => 'client_id',
                         'header' => 'Client',
                         'type' => 'raw',
-                        'value' => '(!empty($data->client)) ? CHtml::link("{$data->client->firstname} {$data->client->lastname} {$data->client->email}", array("workflow/view", "id"=>$data->client->current_workflow->id, "c"=>$data->client->id)) : ""',
+                        'value' => '(!empty($data->client)) ? CHtml::link("{$data->client->firstname} {$data->client->lastname} {$data->client->email}", array("workflow/view", "id"=>$data->client->workflow->id, "c"=>$data->client->id)) : ""',
                     ),
                     array(
                         'name' => 'author',
